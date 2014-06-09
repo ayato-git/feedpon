@@ -1,0 +1,22 @@
+{
+  "name": "feedpon",
+  "version": "0.0.0",
+  "authors": [
+    "Shota Nozaki <emonkak@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "almond": "~0.2.9",
+    "bacon": "git://github.com/baconjs/bacon.js#~0.7.14",
+    "es6-promise": "~1.0.0",
+    "lazy.js": "~0.3.2",
+    "zeptojs": "~1.1.3"
+  }
+}
