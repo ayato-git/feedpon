@@ -2,87 +2,97 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({camelize: true});
 var argv = require('minimist')(process.argv.slice(2));
 
+var isWatched = argv._.indexOf('watch') >= 0;
+var isProduction = argv.production;
+
 gulp.task('bower', function() {
-  return plugins.bower().pipe(gulp.dest('build/vendor/'));
+  return plugins.bower().pipe(gulp.dest('src/vendor/'));
 });
 
 gulp.task('jade', function() {
   return gulp.src('src/jade/*.jade')
-    .pipe(plugins.jade())
-    .pipe(gulp.dest('public/'));
+    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
+    .pipe(plugins.jade({pretty: !isProduction}))
+    .pipe(gulp.dest('app/cordova/www'));
 });
 
 gulp.task('less', function() {
-  return gulp.src('src/less/all.less')
+  return gulp.src('src/less/index.less')
+    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.less({
-      compress: !!argv.production
+      compress: isProduction
     }))
-    .pipe(gulp.dest('public/css/'));
+    .pipe(gulp.dest('app/cordova/www/css/'));
 });
 
 gulp.task('typescript', ['bower'], function() {
   return gulp.src('src/ts/**/*.ts')
+    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.tsc({
       module: 'amd',
-      noImplicitAny: true,
-      target: 'ES5'
+      noImplicitAny: true
     }))
     .pipe(gulp.dest('build/modules/'))
 });
 
-gulp.task('zepto', ['bower'], function() {
+gulp.task('js:zepto', ['bower'], function() {
   return gulp.src([
-      'build/vendor/zeptojs/src/zepto.js',
-      'build/vendor/zeptojs/src/event.js',
-      'build/vendor/zeptojs/src/callbacks.js',
-      'build/vendor/zeptojs/src/deferred.js',
-      'build/vendor/zeptojs/src/ajax.js'
+      'src/vendor/zeptojs/src/zepto.js',
+      'src/vendor/zeptojs/src/event.js',
+      'src/vendor/zeptojs/src/callbacks.js',
+      'src/vendor/zeptojs/src/deferred.js',
+      'src/vendor/zeptojs/src/ajax.js'
     ])
+    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.concat('zepto.js'))
     .pipe(gulp.dest('build/modules/'));
 });
 
-gulp.task('requirejs', ['typescript', 'zepto'], function() {
+gulp.task('requirejs', ['typescript', 'js:zepto'], function() {
   var requirejs = require('requirejs');
 
   requirejs.optimize({
     name: 'almond',
     baseUrl: 'build/modules/',
-    out: 'public/js/all.js',
-    optimize: argv.production ? 'uglify' : 'none',
+    out: 'app/cordova/www/js/index.js',
+    optimize: isProduction ? 'uglify' : 'none',
     paths: {
-      'almond': '../vendor/almond/almond',
-      'bacon': '../vendor/bacon/dist/Bacon',
-      'lazy': '../vendor/lazy.js/lazy'
+      'almond': '../../src/vendor/almond/almond',
+      'bacon': '../../src/vendor/bacon/dist/Bacon',
+      'framework7': '../../src/vendor/framework7/dist/js/framework7',
+      'jquery': 'zepto',
+      'lazy': '../../src/vendor/lazy.js/lazy'
     },
     include: [
       'almond',
       'bacon',
-      'feedpon/feedpon'
+      'feedpon/feedpon',
+      'framework7'
     ],
     insertRequire: ['feedpon/feedpon'],
-    map: {
-      '*': {
-        'jquery': 'zepto'
-      }
-    },
     shim: {
       'bacon': {
-        deps: ['zepto']
+        deps: ['jquery']
       },
-      'zepto': {
-        exports: 'Zepto'
+      'framework7': {
+        deps: ['jquery'],
+        exports: 'Framework7'
+      },
+      'jquery': {
+        exports: '$'
       }
     }
   });
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/ts/**/*.ts', 'typescript');
+  gulp.watch('src/jade/**/*.jade', ['jade']);
+  gulp.watch('src/less/**/*.less', ['less']);
+  gulp.watch('src/ts/**/*.ts', ['requirejs']);
 });
 
 gulp.task('clean', function() {
-  gulp.src(['bower_components', 'build', 'public'])
+  gulp.src(['bower_components', 'build', 'src/vendor', 'app/www'])
     .pipe(plugins.clean());
 });
 

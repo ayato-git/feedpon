@@ -1,5 +1,6 @@
 .DS_Store
+app/cordova/www/
 bower_components/
 build/
 node_modules/
-public/
+src/vendor

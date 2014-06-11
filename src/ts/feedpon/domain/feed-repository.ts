@@ -1,11 +1,12 @@
 /// <reference path="interfaces.d.ts" />
-/// <reference path="../../jquery/jquery.d.ts" />
-
-import $ = require('jquery');
+/// <reference path="../infrastructure/interfaces.d.ts" />
 
 class FeedRepository implements IFeedRepository {
+    constructor(private client: IFeedlyClient) {
+    }
+
     find(feedId: string): JQueryPromise<Feed> {
-        return $.getJSON('v3/feeds/' + feedId);
+        return this.client.request('GET', '/v3/feeds/' + feedId);
     }
 }
 

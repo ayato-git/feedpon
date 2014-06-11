@@ -2,7 +2,7 @@
   "name": "feedpon",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "www/js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp"
@@ -17,8 +17,11 @@
     "gulp-jade": "^0.5.0",
     "gulp-less": "^1.2.3",
     "gulp-load-plugins": "^0.5.1",
+    "gulp-plumber": "^0.6.2",
     "gulp-tsc": "^0.9.0",
+    "gulp-util": "^2.2.16",
     "gulp-watch": "^0.6.5",
+    "ios-sim": "^1.9.0",
     "minimist": "^0.1.0",
     "requirejs": "^2.1.14"
   },

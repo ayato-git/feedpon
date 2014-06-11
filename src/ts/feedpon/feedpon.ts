@@ -1,5 +1,9 @@
-import FeedRepository = require('feedpon/domain/feed-repository');
+/// <reference path="../framework7/framework7.d.ts" />
 
-var feedRepository = new FeedRepository();
+import Framework7 = require('framework7');
 
-feedRepository.find('feed');
+var app: any = new Framework7();
+
+var mainView = app.addView('.view-main', {
+    dynamicNavbar: true
+});
