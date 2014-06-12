@@ -5,8 +5,12 @@ var argv = require('minimist')(process.argv.slice(2));
 var isWatched = argv._.indexOf('watch') >= 0;
 var isProduction = argv.production;
 
-gulp.task('bower', function() {
-  return plugins.bower().pipe(gulp.dest('src/vendor/'));
+gulp.task('bower', function(done) {
+  var bower = require('bower');
+
+  bower.commands.install().on('end', function() {
+    done();
+  });
 });
 
 gulp.task('jade', function() {
@@ -37,11 +41,11 @@ gulp.task('typescript', ['bower'], function() {
 
 gulp.task('js:zepto', ['bower'], function() {
   return gulp.src([
-      'src/vendor/zeptojs/src/zepto.js',
-      'src/vendor/zeptojs/src/event.js',
-      'src/vendor/zeptojs/src/callbacks.js',
-      'src/vendor/zeptojs/src/deferred.js',
-      'src/vendor/zeptojs/src/ajax.js'
+      'bower_components/zeptojs/src/zepto.js',
+      'bower_components/zeptojs/src/event.js',
+      'bower_components/zeptojs/src/callbacks.js',
+      'bower_components/zeptojs/src/deferred.js',
+      'bower_components/zeptojs/src/ajax.js'
     ])
     .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.concat('zepto.js'))
@@ -57,11 +61,11 @@ gulp.task('requirejs', ['typescript', 'js:zepto'], function() {
     out: 'app/cordova/www/js/index.js',
     optimize: isProduction ? 'uglify' : 'none',
     paths: {
-      'almond': '../../src/vendor/almond/almond',
-      'bacon': '../../src/vendor/bacon/dist/Bacon',
-      'framework7': '../../src/vendor/framework7/dist/js/framework7',
+      'almond': '../../bower_components/almond/almond',
+      'bacon': '../../bower_components/bacon/dist/Bacon',
+      'framework7': '../../bower_components/framework7/dist/js/framework7',
       'jquery': 'zepto',
-      'lazy': '../../src/vendor/lazy.js/lazy'
+      'lazy': '../../bower_components/lazy.js/lazy'
     },
     include: [
       'almond',
@@ -92,7 +96,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('clean', function() {
-  gulp.src(['bower_components', 'build', 'src/vendor', 'app/www'])
+  gulp.src(['bower_components', 'build', 'app/cordova/www'])
     .pipe(plugins.clean());
 });
 
