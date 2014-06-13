@@ -3,4 +3,3 @@ app/cordova/www/
 bower_components/
 build/
 node_modules/
-src/vendor

@@ -34,7 +34,8 @@ gulp.task('typescript', ['bower'], function() {
     .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.tsc({
       module: 'amd',
-      noImplicitAny: true
+      noImplicitAny: true,
+      target: 'ES5'
     }))
     .pipe(gulp.dest('build/modules/'))
 });
