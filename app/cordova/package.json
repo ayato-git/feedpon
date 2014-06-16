@@ -1,0 +1,17 @@
+{
+  "name": "feedpon",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp"
+  },
+  "author": "Shota Nozaki",
+  "license": "MIT",
+  "dependencies": {
+    "cordova": "^3.5.0-0.2.4"
+  },
+  "devDependencies": {
+    "ios-sim": "^1.9.0"
+  }
+}
