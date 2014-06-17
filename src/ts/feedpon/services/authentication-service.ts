@@ -1,7 +1,8 @@
 /// <reference path="../../feedly/interfaces.d.ts" />
+/// <reference path="../repositories/interfaces.d.ts" />
 
 class AuthenticationService {
-    constructor(private authentication: IAuthentication) {
+    constructor(private authentication: IAuthentication, private tokenRepository: ITokenRepository) {
     }
 
     authenticate(windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationExchangeResponse> {
@@ -20,6 +21,9 @@ class AuthenticationService {
                     redirect_uri: 'http://www.feedly.com/feedly.html',
                     grant_type: 'authorization_code'
                 });
+            })
+            .done((response) => {
+                this.tokenRepository.storeTokens(response);
             });
     }
 }
