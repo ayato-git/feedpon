@@ -8,6 +8,7 @@ import ApplicationRepository = require('feedpon/repositories/application-reposit
 import AuthenticationService = require('feedpon/services/authentication-service');
 import FeedlyAuthentication = require('feedly/authentication');
 import FeedlyClient = require('feedly/client');
+import FeedlyGateway = require('feedly/gateway');
 import Framework7 = require('framework7');
 
 var app: any = new Framework7();
@@ -25,10 +26,10 @@ $(document).on('deviceready', function() {
     authenticationService
         .authenticate(windowOpener)
         .done((response) => {
-            var client = new FeedlyClient(response.access_token);
+            var gateway = new FeedlyGateway(new FeedlyClient(response.access_token));
             var subscriptionItemTemplate: any = require('hgn!templates/subscription-item.mustache');
 
-            client.allSubscriptions().done((subscriptions) => {
+            gateway.allSubscriptions().done((subscriptions) => {
                 var $subscriptions = $('.subscriptions');
 
                 subscriptions.forEach((subscription) => {
