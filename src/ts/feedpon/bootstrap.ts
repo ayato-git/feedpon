@@ -1,14 +1,14 @@
 /// <reference path="../../DefinitelyTyped/cordova/cordova.d.ts" />
 /// <reference path="../../DefinitelyTyped/requirejs/require.d.ts" />
-/// <reference path="../framework7/framework7.d.ts" />
-/// <amd-dependency path="hgn!templates/subscription-item.mustache" />
+/// <reference path="../framework7.d.ts" />
+/// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
 
 import $ = require('jquery');
-import ApplicationRepository = require('feedpon/repositories/application-repository');
-import AuthenticationService = require('feedpon/services/authentication-service');
-import FeedlyAuthentication = require('feedly/authentication');
-import FeedlyClient = require('feedly/client');
-import FeedlyGateway = require('feedly/gateway');
+import ApplicationRepository = require('./domain/repositories/application-repository');
+import AuthenticationService = require('./domain/services/authentication-service');
+import FeedlyAuthentication = require('./infrastructure/feedly/authentication');
+import FeedlyClient = require('./infrastructure/feedly/client-on-worker');
+import FeedlyGateway = require('./infrastructure/feedly/gateway');
 import Framework7 = require('framework7');
 
 var app: any = new Framework7();
@@ -27,7 +27,7 @@ $(document).on('deviceready', function() {
         .authenticate(windowOpener)
         .done((response) => {
             var gateway = new FeedlyGateway(new FeedlyClient(response.access_token));
-            var subscriptionItemTemplate: any = require('hgn!templates/subscription-item.mustache');
+            var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
 
             gateway.allSubscriptions().done((subscriptions) => {
                 var $subscriptions = $('.subscriptions');

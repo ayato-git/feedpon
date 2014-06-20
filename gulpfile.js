@@ -18,9 +18,14 @@ gulp.task('copy:bower', ['bower'], function() {
     .pipe(gulp.dest('app/cordova/www/img'));
 });
 
+gulp.task('copy:js', ['typescript'], function() {
+  return gulp.src(['build/modules/feedpon/ui/workers/*'])
+    .pipe(gulp.dest('app/cordova/www/js'));
+});
+
 gulp.task('copy:templates', function() {
-  return gulp.src(['src/templates/**/*'])
-    .pipe(gulp.dest('build/modules/templates'));
+  return gulp.src(['src/templates/*'])
+    .pipe(gulp.dest('build/modules/feedpon/templates'));
 });
 
 gulp.task('jade', function() {
@@ -30,7 +35,7 @@ gulp.task('jade', function() {
     .pipe(gulp.dest('app/cordova/www'));
 });
 
-gulp.task('less', function() {
+gulp.task('less', ['bower'], function() {
   return gulp.src('src/less/index.less')
     .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.less({
@@ -81,9 +86,9 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
       'lazy': '../../bower_components/lazy.js/lazy',
       'text': '../../bower_components/requirejs-text/text'
     },
-    include: ['feedpon/feedpon'],
+    include: ['feedpon/bootstrap'],
     stubModules: ['text', 'hgn'],
-    insertRequire: ['feedpon/feedpon'],
+    insertRequire: ['feedpon/bootstrap'],
     shim: {
       'bacon': {
         deps: ['jquery']
@@ -102,7 +107,7 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
 gulp.task('watch', function() {
   gulp.watch('src/jade/**/*.jade', ['jade']);
   gulp.watch('src/less/**/*.less', ['less']);
-  gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['requirejs']);
+  gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['requirejs', 'copy:js']);
 });
 
 gulp.task('clean', function() {
@@ -110,4 +115,4 @@ gulp.task('clean', function() {
     .pipe(plugins.clean());
 });
 
-gulp.task('default', ['jade', 'less', 'requirejs', 'copy:bower']);
+gulp.task('default', ['jade', 'less', 'requirejs', 'copy:bower', 'copy:js']);

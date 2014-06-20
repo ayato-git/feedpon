@@ -2,7 +2,7 @@
 
 import $ = require('jquery');
 
-class Client {
+class Client implements IClient {
     constructor(private accessToken:string, private endPoint: string = 'http://cloud.feedly.com') {
     }
 

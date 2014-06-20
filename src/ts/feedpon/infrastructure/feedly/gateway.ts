@@ -1,9 +1,7 @@
 /// <reference path="interfaces.d.ts" />
 
-import Client = require('feedly/client');
-
 class Gateway implements IFeeds, ICategories, ISubscriptions {
-    constructor(private client: Client) {
+    constructor(private client: IClient) {
     }
 
     allCategories(): JQueryPromise<Category[]> {

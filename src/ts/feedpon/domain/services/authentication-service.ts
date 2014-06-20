@@ -1,4 +1,4 @@
-/// <reference path="../../feedly/interfaces.d.ts" />
+/// <reference path="../../infrastructure/feedly/interfaces.d.ts" />
 /// <reference path="../repositories/interfaces.d.ts" />
 
 class AuthenticationService {

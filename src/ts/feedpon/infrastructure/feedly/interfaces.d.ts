@@ -1,4 +1,8 @@
-/// <reference path="../../DefinitelyTyped//jquery/jquery.d.ts" />
+/// <reference path="../../../../DefinitelyTyped/jquery/jquery.d.ts" />
+
+interface IClient {
+    request<T>(method: string, path: string, data?: any): JQueryPromise<T>;
+}
 
 // Authentication API
 interface IAuthentication {
