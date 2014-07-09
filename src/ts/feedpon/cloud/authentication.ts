@@ -1,11 +1,11 @@
 /// <reference path="interfaces.d.ts" />
 
 class Authentication implements IAuthentication {
-    constructor(private endPoint: string = 'http://cloud.feedly.com') {
+    constructor(private client: IClient) {
     }
 
     authenticate(params: AuthenticationAuthenticateParams, windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationAuthenticateResponse> {
-        var authUrl = this.endPoint + '/v3/auth/auth?' + $.param(params);
+        var authUrl = this.client.endPoint + '/v3/auth/auth?' + $.param(params);
 
         return windowOpener(authUrl).then<AuthenticationAuthenticateResponse>(function(url) {
             var defer = $.Deferred();
@@ -32,24 +32,15 @@ class Authentication implements IAuthentication {
     }
 
     exchange(params: AuthenticationExchangeParams): JQueryPromise<AuthenticationExchangeResponse> {
-        return this.request('POST', '/v3/auth/token', params);
+        return this.client.request('POST', '/v3/auth/token', params);
     }
 
     refresh(params: AuthenticationRefreshParams): JQueryPromise<AuthenticationRefreshResponse> {
-        return this.request('POST', '/v3/auth/token', params);
+        return this.client.request('POST', '/v3/auth/token', params);
     }
 
     revoke(params: AuthenticationRevokeParams): JQueryPromise<AuthenticationRevokeResponse> {
-        return this.request('POST', '/v3/auth/token', params);
-    }
-
-    private request<T>(method: string, path: string, data?: any): JQueryPromise<T> {
-        return $.ajax({
-            data: data,
-            dataType: 'json',
-            type: method,
-            url: this.endPoint + path,
-        });
+        return this.client.request('POST', '/v3/auth/token', params);
     }
 }
 

@@ -3,3 +3,4 @@ app/cordova/www/
 bower_components/
 build/
 node_modules/
+xcuserdata

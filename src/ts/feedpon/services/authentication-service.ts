@@ -1,8 +1,8 @@
-/// <reference path="../../infrastructure/feedly/interfaces.d.ts" />
-/// <reference path="../repositories/interfaces.d.ts" />
+/// <reference path="../cloud/interfaces.d.ts" />
+/// <reference path="../persistence/interfaces.d.ts" />
 
 class AuthenticationService {
-    constructor(private authentication: IAuthentication, private tokenRepository: ITokenRepository) {
+    constructor(private authentication: IAuthentication, private credentialRepository: ICredentialRepository) {
     }
 
     authenticate(windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationExchangeResponse> {
@@ -23,7 +23,7 @@ class AuthenticationService {
                 });
             })
             .done((response) => {
-                this.tokenRepository.storeTokens(response);
+                this.credentialRepository.storeCredential(response);
             });
     }
 }

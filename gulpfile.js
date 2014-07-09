@@ -13,13 +13,18 @@ gulp.task('bower', function(done) {
   });
 });
 
-gulp.task('copy:bower', ['bower'], function() {
+gulp.task('copy:images', ['bower'], function() {
   return gulp.src(['bower_components/framework7/dist/img/*'])
     .pipe(gulp.dest('app/cordova/www/img'));
 });
 
+gulp.task('copy:fonts', ['bower'], function() {
+  return gulp.src(['bower_components/ionicons/fonts/*'])
+    .pipe(gulp.dest('app/cordova/www/fonts'));
+});
+
 gulp.task('copy:js', ['typescript'], function() {
-  return gulp.src(['build/modules/feedpon/ui/workers/*'])
+  return gulp.src(['build/modules/feedpon/ui/worker/*'])
     .pipe(gulp.dest('app/cordova/www/js'));
 });
 
@@ -115,4 +120,4 @@ gulp.task('clean', function() {
     .pipe(plugins.clean());
 });
 
-gulp.task('default', ['jade', 'less', 'requirejs', 'copy:bower', 'copy:js']);
+gulp.task('default', ['jade', 'less', 'requirejs', 'copy:images', 'copy:fonts', 'copy:js']);

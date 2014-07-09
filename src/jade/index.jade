@@ -32,12 +32,15 @@ html
         .navbar
           .navbar-inner
             // We need cool sliding animation on title element, so we have additional "sliding" class
-            .center.sliding Feedpon
-            .right
+            .left
               // Right link contains only icon - additional "icon-only" class
               // Additional "open-panel" class tells app to open panel when we click on this link
               a.link.icon-only.open-panel(href='#')
                 i.icon.icon-bars-blue
+            .center.sliding Feedpon
+            .right
+              a.link.icon-only(href='#')
+                i.icon.ion-ios7-refresh-empty.js-reload-subscriptions(style='font-size: 34px')
 
         // Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes
         .pages.navbar-through.toolbar-through
@@ -46,6 +49,8 @@ html
             // Scrollable page content
             .page-content
               .content-block
+                p
+                  a.button.js-authenticate Authenticate
 
     script(src="cordova.js")
     script(src="js/index.js")

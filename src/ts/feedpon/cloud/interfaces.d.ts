@@ -1,6 +1,8 @@
-/// <reference path="../../../../DefinitelyTyped/jquery/jquery.d.ts" />
+/// <reference path="../../../DefinitelyTyped/jquery/jquery.d.ts" />
 
 interface IClient {
+    endPoint: string;
+
     request<T>(method: string, path: string, data?: any): JQueryPromise<T>;
 }
 

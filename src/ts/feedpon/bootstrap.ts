@@ -4,61 +4,77 @@
 /// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
 
 import $ = require('jquery');
-import ApplicationRepository = require('./domain/repositories/application-repository');
-import AuthenticationService = require('./domain/services/authentication-service');
-import FeedlyAuthentication = require('./infrastructure/feedly/authentication');
-import FeedlyClient = require('./infrastructure/feedly/client-on-worker');
-import FeedlyGateway = require('./infrastructure/feedly/gateway');
+import CredentialRepository = require('./persistence/credential-repository');
+import AuthenticationService = require('./services/authentication-service');
+import Authentication = require('./cloud/authentication');
+import Client = require('./cloud/client');
+import Gateway = require('./cloud/gateway');
 import Framework7 = require('framework7');
 
-var app: any = new Framework7();
+var client = new Client();
+var gateway = new Gateway(client);
 
-var mainView = app.addView('.view-main', {
-    dynamicNavbar: true
-});
+var credentialRepository = new CredentialRepository(window.localStorage);
+var credential = credentialRepository.findCredential();
+if (credential) {
+    client.setCredential(credential);
+}
 
 $(document).on('deviceready', function() {
+    var app: any = new Framework7();
+    var mainView = app.addView('.view-main', {
+        dynamicNavbar: true
+    });
+
+    $('.js-authenticate').on('click', authenticate);
+    $('.js-reload-subscriptions').on('click', reloadSubscriptions);
+});
+
+function reloadSubscriptions() {
+    var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
+
+    gateway.allSubscriptions().done((subscriptions) => {
+        var $subscriptions = $('.subscriptions');
+
+        subscriptions.forEach((subscription) => {
+            var contents = subscriptionItemTemplate.render({
+                id: subscription.id,
+                title: subscription.title,
+                count: 0,
+                website: subscription.website
+            });
+
+            $subscriptions.append(contents);
+        });
+    })
+}
+
+function authenticate() {
     var authenticationService = new AuthenticationService(
-        new FeedlyAuthentication(),
-        new ApplicationRepository(window.localStorage)
+        new Authentication(client),
+        credentialRepository
     );
 
     authenticationService
         .authenticate(windowOpener)
         .done((response) => {
-            var gateway = new FeedlyGateway(new FeedlyClient(response.access_token));
-            var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
-
-            gateway.allSubscriptions().done((subscriptions) => {
-                var $subscriptions = $('.subscriptions');
-
-                subscriptions.forEach((subscription) => {
-                    var contents = subscriptionItemTemplate.render({
-                        id: subscription.id,
-                        title: subscription.title,
-                        count: 0,
-                        website: subscription.website
-                    });
-
-                    $subscriptions.append(contents);
-                });
-            })
+            client.setCredential(response);
         });
+}
 
-    function windowOpener(url: string): JQueryPromise<string> {
-        var authWindow = window.open(url, '_blank');
-        var defer = $.Deferred();
+function windowOpener(url: string): JQueryPromise<string> {
+    var authWindow = window.open(url, '_blank');
+    var defer = $.Deferred();
 
-        authWindow.addEventListener('loadstart', function(e) {
-            var url = e.url;
+    authWindow.addEventListener('loadstart', function(e) {
+        var url = e.url;
 
-            if (/^http:\/\/localhost\//.test(url)) {
-                authWindow.close();
+        if (/^http:\/\/localhost\//.test(url)) {
+            authWindow.close();
 
-                defer.resolveWith(authWindow, [url]);
-            }
-        });
+            defer.resolveWith(authWindow, [url]);
+        }
+    });
 
-        return defer.promise();
-    };
-});
+    return defer.promise();
+};

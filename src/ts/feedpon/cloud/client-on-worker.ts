@@ -5,25 +5,35 @@ import $ = require('jquery');
 class ClientOnWorker implements IClient {
     private worker: Worker;
 
+    private headers: {[key: string]: any} = {};
+
     private tasks: {[key: string]: JQueryDeferred<any>} = {};
 
-    private unique: number = 0;
+    private sequence: number = 0;
 
-    constructor(private accessToken:string, private endPoint: string = 'http://cloud.feedly.com') {
-        this.worker = new Worker('js/requester.js');
+    constructor(public endPoint: string = 'http://cloud.feedly.com') {
+        this.worker = new Worker('js/xhr-worker.js');
         this.worker.onmessage = this.onMessage.bind(this);
+    }
+
+    setHeader(key: string, value: any): void {
+        this.headers[key] = value;
+    }
+
+    deleteHeader(key: string): void {
+        delete this.headers[key];
     }
 
     request<T>(method: string, path: string, data?: any): JQueryPromise<T> {
         var defer = $.Deferred();
-        var id = this.unique++;
+        var id = this.sequence++;
 
         this.tasks[id] = defer;
 
         this.worker.postMessage({
             id: id,
             data: data,
-            headers: {'Authorization': 'OAuth ' + this.accessToken},
+            headers: this.headers,
             type: method,
             url: this.endPoint + path,
         });
