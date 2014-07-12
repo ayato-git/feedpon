@@ -18,7 +18,8 @@
     "es6-promise": "~1.0.0",
     "framework7": "~0.8.6",
     "hogan": "~3.0.2",
-    "lazy.js": "~0.3.2",
+    "ionicons": "~1.5.2",
+    "linqjs": "https://github.com/emonkak/linqjs.git#v3",
     "requirejs-hogan": "~0.0.1",
     "requirejs-text": "~2.0.12",
     "zeptojs": "~1.1.3"

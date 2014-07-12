@@ -88,7 +88,7 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
       'hgn': '../../bower_components/requirejs-hogan/hgn',
       'hogan': '../../bower_components/hogan/web/builds/3.0.2/hogan-3.0.2.amd',
       'jquery': 'zepto',
-      'lazy': '../../bower_components/lazy.js/lazy',
+      'linqjs': '../../bower_components/linqjs/linq',
       'text': '../../bower_components/requirejs-text/text'
     },
     include: ['feedpon/bootstrap'],

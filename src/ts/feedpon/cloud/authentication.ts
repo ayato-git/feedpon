@@ -4,10 +4,10 @@ class Authentication implements IAuthentication {
     constructor(private client: IClient) {
     }
 
-    authenticate(params: AuthenticationAuthenticateParams, windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationAuthenticateResponse> {
-        var authUrl = this.client.endPoint + '/v3/auth/auth?' + $.param(params);
+    authenticate(input: AuthenticateInput, windowOpener: WindowOpener): JQueryPromise<AuthenticateResponse> {
+        var authUrl = this.client.endPoint + '/v3/auth/auth?' + $.param(input);
 
-        return windowOpener(authUrl).then<AuthenticationAuthenticateResponse>(function(url) {
+        return windowOpener(authUrl).then<AuthenticateResponse>(function(url) {
             var defer = $.Deferred();
             var matchesForCode = url.match(/[?&]code=([^&]*)/);
             var matchesForState = url.match(/[?&]state=([^&]*)/);
@@ -31,16 +31,16 @@ class Authentication implements IAuthentication {
         })
     }
 
-    exchange(params: AuthenticationExchangeParams): JQueryPromise<AuthenticationExchangeResponse> {
-        return this.client.request('POST', '/v3/auth/token', params);
+    exchange(input: ExchangeTokenInput): JQueryPromise<ExchangeTokenResponse> {
+        return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    refresh(params: AuthenticationRefreshParams): JQueryPromise<AuthenticationRefreshResponse> {
-        return this.client.request('POST', '/v3/auth/token', params);
+    refresh(input: RefreshTokenInput): JQueryPromise<RefreshTokenResponse> {
+        return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    revoke(params: AuthenticationRevokeParams): JQueryPromise<AuthenticationRevokeResponse> {
-        return this.client.request('POST', '/v3/auth/token', params);
+    revoke(input: RevokeTokenInput): JQueryPromise<RevokeTokenResponse> {
+        return this.client.request('POST', '/v3/auth/token', input);
     }
 }
 

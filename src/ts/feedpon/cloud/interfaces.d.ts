@@ -6,22 +6,22 @@ interface IClient {
     request<T>(method: string, path: string, data?: any): JQueryPromise<T>;
 }
 
-// Authentication API
+// Authentication API:
 interface IAuthentication {
-    authenticate(params: AuthenticationAuthenticateParams, windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationAuthenticateResponse>;
+    authenticate(input: AuthenticateInput, windowOpener: WindowOpener): JQueryPromise<AuthenticateResponse>;
 
-    exchange(params: AuthenticationExchangeParams): JQueryPromise<AuthenticationExchangeResponse>;
+    exchange(input: ExchangeTokenInput): JQueryPromise<ExchangeTokenResponse>;
 
-    refresh(params: AuthenticationRefreshParams): JQueryPromise<AuthenticationRefreshResponse>;
+    refresh(input: RefreshTokenInput): JQueryPromise<RefreshTokenResponse>;
 
-    revoke(params: AuthenticationRevokeParams): JQueryPromise<AuthenticationRevokeResponse>;
+    revoke(input: RevokeTokenInput): JQueryPromise<RevokeTokenResponse>;
 }
 
-interface AuthenticationWindowOpener {
+interface WindowOpener {
     (url: string): JQueryPromise<string>;
 }
 
-interface AuthenticationAuthenticateParams {
+interface AuthenticateInput {
     response_type: string;
     client_id: string;
     redirect_uri: string;
@@ -29,12 +29,12 @@ interface AuthenticationAuthenticateParams {
     state?: string;
 }
 
-interface AuthenticationAuthenticateResponse {
+interface AuthenticateResponse {
     code: string;
     state?: string;
 }
 
-interface AuthenticationExchangeParams {
+interface ExchangeTokenInput {
     code: string;
     client_id: string;
     client_secret: string;
@@ -43,24 +43,24 @@ interface AuthenticationExchangeParams {
     grant_type: string;
 }
 
-interface AuthenticationExchangeResponse {
+interface ExchangeTokenResponse {
     id: string;
     access_token: string;
     refresh_token: string;
-    expires_in: string;
+    expires_in: number;
     token_type: string;
     plan: string;
     state?: string;
 }
 
-interface AuthenticationRefreshParams {
+interface RefreshTokenInput {
     refresh_token: string;
     client_id: string;
     client_secret: string;
     grant_type: string;
 }
 
-interface AuthenticationRefreshResponse {
+interface RefreshTokenResponse {
     id: string;
     plan: string;
     access_token: string;
@@ -68,19 +68,31 @@ interface AuthenticationRefreshResponse {
     token_type: string;
 }
 
-interface AuthenticationRevokeParams {
+interface RevokeTokenInput {
     refresh_token: string;
     client_id: string;
     client_secret: string;
     grant_type: string;
 }
 
-interface AuthenticationRevokeResponse {
+interface RevokeTokenResponse {
     id: string;
     expires_in: string;
 }
 
-// Feeds API
+// Categories API:
+interface ICategories {
+    allCategories(): JQueryPromise<Category[]>;
+
+    deleteCategory(categoryId: string): JQueryPromise<string>;
+}
+
+interface Category {
+    id: string;
+    label: string;
+}
+
+// Feeds API:
 interface IFeeds {
     findFeed(feedId: string): JQueryPromise<Feed>;
 }
@@ -97,30 +109,57 @@ interface Feed {
     status: string;
 }
 
-// Categories API
-interface ICategories {
-    allCategories(): JQueryPromise<Category[]>;
+// Markers API:
+interface IMarkers {
+    unreadCounts(input?: UnreadCountsInput): JQueryPromise<UnreadCountsResponce>;
 
-    deleteCategory(categoryId: string): JQueryPromise<string>;
+    markAsReadForEntries(entryId: string): JQueryPromise<void>;
+    markAsReadForEntries(entryIds: string[]): JQueryPromise<void>;
+
+    markAsReadForFeeds(feedId: string): JQueryPromise<void>;
+    markAsReadForFeeds(feedIds: string[]): JQueryPromise<void>;
+
+    markAsReadForCetegories(categoryId: string): JQueryPromise<void>;
+    markAsReadForCetegories(categoryIds: string[]): JQueryPromise<void>;
+
+    keepUnreadForEntries(entryId: string): JQueryPromise<void>;
+    keepUnreadForEntries(entryIds: string[]): JQueryPromise<void>;
+
+    keepUnreadForFeeds(feedId: string): JQueryPromise<void>;
+    keepUnreadForFeeds(feedIds: string[]): JQueryPromise<void>;
+
+    keepUnreadForCetegories(categoryId: string): JQueryPromise<void>;
+    keepUnreadForCetegories(categoryIds: string[]): JQueryPromise<void>;
 }
 
-interface Category {
+interface UnreadCountsInput {
+    autorefresh?: boolean;
+    newerThan?: number;
+    streamId?: string;
+}
+
+interface UnreadCountsResponce {
+    unreadcounts: UnreadCount[];
+}
+
+interface UnreadCount {
+    count: number;
+    updated: number;
     id: string;
-    label: string;
 }
 
-// Subscriptions API
+// Subscriptions API:
 interface ISubscriptions {
     allSubscriptions(): JQueryPromise<Subscription[]>;
 }
 
 interface Subscription {
-    sortid: string;
-    title: string;
-    updated: number;
     id: string;
-    categories: Category[];
-    visualUrl: string;
-    added: number;
+    title: string;
     website: string;
+    categories: Category[];
+    updated: number;
+    velocity: number;
+    topics: string[];
+    visualUrl: string;
 }

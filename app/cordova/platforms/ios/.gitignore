@@ -1,6 +1,9 @@
 *.mode1v3
 *.perspectivev3
 *.pbxuser
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata
 .DS_Store
 build/
 cordova/console.log

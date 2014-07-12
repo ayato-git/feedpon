@@ -5,7 +5,7 @@ class AuthenticationService {
     constructor(private authentication: IAuthentication, private credentialRepository: ICredentialRepository) {
     }
 
-    authenticate(windowOpener: AuthenticationWindowOpener): JQueryPromise<AuthenticationExchangeResponse> {
+    authenticate(windowOpener: WindowOpener, now: number = Date.now()): JQueryPromise<ExchangeTokenResponse> {
         return this.authentication
             .authenticate({
                 client_id: 'feedly',
@@ -13,7 +13,7 @@ class AuthenticationService {
                 scope: 'https://cloud.feedly.com/subscriptions',
                 response_type: 'code'
             }, windowOpener)
-            .then<AuthenticationExchangeResponse>((response) => {
+            .then<ExchangeTokenResponse>((response) => {
                 return this.authentication.exchange({
                     code: response.code,
                     client_id: 'feedly',
@@ -23,8 +23,22 @@ class AuthenticationService {
                 });
             })
             .done((response) => {
-                this.credentialRepository.storeCredential(response);
+                var credential: Credential = <Credential> response;
+                credential.authorized = now;
+
+                this.credentialRepository.store(credential);
             });
+    }
+
+    isAuthorized(): boolean {
+        return this.credentialRepository.exists();
+    }
+
+    isTokenExpired(now: number = Date.now()): boolean {
+        var credential = this.credentialRepository.get();
+        var lifetime = credential.authorized + (credential.expires_in * 1000);
+
+        return lifetime < now;
     }
 }
 

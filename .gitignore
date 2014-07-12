@@ -1,4 +1,5 @@
 .DS_Store
+.gulp-tsc-tmp-*
 app/cordova/www/
 bower_components/
 build/

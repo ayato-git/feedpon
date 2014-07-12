@@ -4,16 +4,20 @@ class CredentialRepository implements ICredentialRepository {
     constructor(private storage: Storage) {
     }
 
-    findCredential(): AuthenticationExchangeResponse {
+    get(): Credential {
         var credential = this.storage.getItem('credential');
         return credential != null ? JSON.parse(credential) : null;
     }
 
-    storeCredential(credential: AuthenticationExchangeResponse): void {
+    exists(): boolean {
+        return !!this.storage.getItem('credential');
+    }
+
+    store(credential: Credential): void {
         this.storage.setItem('credential', JSON.stringify(credential));
     }
 
-    deleteCredential(): void {
+    delete(): void {
         this.storage.removeItem('credential');
     }
 }

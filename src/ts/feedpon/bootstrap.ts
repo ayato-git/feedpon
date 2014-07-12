@@ -1,27 +1,25 @@
-/// <reference path="../../DefinitelyTyped/cordova/cordova.d.ts" />
-/// <reference path="../../DefinitelyTyped/requirejs/require.d.ts" />
-/// <reference path="../framework7.d.ts" />
 /// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
 
 import $ = require('jquery');
-import CredentialRepository = require('./persistence/credential-repository');
-import AuthenticationService = require('./services/authentication-service');
 import Authentication = require('./cloud/authentication');
+import AuthenticationService = require('./services/authentication-service');
 import Client = require('./cloud/client');
-import Gateway = require('./cloud/gateway');
+import CredentialRepository = require('./persistence/credential-repository');
+import Enumerable = require('linqjs');
 import Framework7 = require('framework7');
+import Gateway = require('./cloud/gateway');
 
 var client = new Client();
 var gateway = new Gateway(client);
 
 var credentialRepository = new CredentialRepository(window.localStorage);
-var credential = credentialRepository.findCredential();
+var credential = credentialRepository.get();
 if (credential) {
     client.setCredential(credential);
 }
 
 $(document).on('deviceready', function() {
-    var app: any = new Framework7();
+    var app = new Framework7();
     var mainView = app.addView('.view-main', {
         dynamicNavbar: true
     });
@@ -31,21 +29,36 @@ $(document).on('deviceready', function() {
 });
 
 function reloadSubscriptions() {
-    var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
+    $.when(gateway.allSubscriptions(), gateway.unreadCounts())
+        .done((data1: any[], data2: any[]) => {
+            var $subscriptions = $('.subscriptions');
+            var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
+            var subscriptions: Subscription[] = data1[0];
+            var unreadCounts: UnreadCount[] = data2[0].unreadcounts;
 
-    gateway.allSubscriptions().done((subscriptions) => {
-        var $subscriptions = $('.subscriptions');
+            Enumerable
+                .from(subscriptions)
+                .join(
+                    unreadCounts,
+                    (subscription) => subscription.id,
+                    (unreadCount) => unreadCount.id,
+                    (subscription, unreadCount) => {
+                        return {
+                            subscription: subscription,
+                            unreadCount: unreadCount
+                        };
+                    }
+                )
+                .forEach(item => {
+                    var contents = subscriptionItemTemplate.render({
+                        id: item.subscription.id,
+                        title: item.subscription.title,
+                        unreadCount: item.unreadCount.count,
+                        website: item.subscription.website
+                    });
 
-        subscriptions.forEach((subscription) => {
-            var contents = subscriptionItemTemplate.render({
-                id: subscription.id,
-                title: subscription.title,
-                count: 0,
-                website: subscription.website
-            });
-
-            $subscriptions.append(contents);
-        });
+                    $subscriptions.append(contents);
+                });
     })
 }
 

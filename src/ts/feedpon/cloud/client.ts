@@ -3,12 +3,12 @@
 import $ = require('jquery');
 
 class Client implements IClient {
-    private credential: AuthenticationExchangeResponse;
+    private credential: ExchangeTokenResponse;
 
     constructor(public endPoint: string = 'http://cloud.feedly.com') {
     }
 
-    setCredential(credential: AuthenticationExchangeResponse): void {
+    setCredential(credential: ExchangeTokenResponse): void {
         this.credential = credential;
     }
 

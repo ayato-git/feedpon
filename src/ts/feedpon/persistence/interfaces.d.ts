@@ -1,9 +1,15 @@
 /// <reference path="../cloud/interfaces.d.ts" />
 
 interface ICredentialRepository {
-    findCredential(): AuthenticationExchangeResponse;
+    get(): Credential;
 
-    storeCredential(credential: AuthenticationExchangeResponse): void;
+    exists(): boolean;
 
-    deleteCredential(): void;
+    store(credential: Credential): void;
+
+    delete(): void;
+}
+
+interface Credential extends ExchangeTokenResponse {
+    authorized: number;
 }
