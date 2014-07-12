@@ -24,7 +24,7 @@ gulp.task('copy:fonts', ['bower'], function() {
 });
 
 gulp.task('copy:js', ['typescript'], function() {
-  return gulp.src(['build/modules/feedpon/ui/worker/*'])
+  return gulp.src(['build/modules/feedpon/ui/workers/*'])
     .pipe(gulp.dest('app/cordova/www/js'));
 });
 
