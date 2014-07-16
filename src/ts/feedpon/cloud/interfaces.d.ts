@@ -1,4 +1,4 @@
-/// <reference path="../../../DefinitelyTyped/jquery/jquery.d.ts" />
+/// <reference path="../interfaces.d.ts" />
 
 interface IClient {
     endPoint: string;

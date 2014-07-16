@@ -24,7 +24,7 @@ class AuthenticationService {
             })
             .done((response) => {
                 var credential: Credential = <Credential> response;
-                credential.authorized = now;
+                credential.created = now;
 
                 this.credentialRepository.store(credential);
             });
@@ -36,7 +36,7 @@ class AuthenticationService {
 
     isTokenExpired(now: number = Date.now()): boolean {
         var credential = this.credentialRepository.get();
-        var lifetime = credential.authorized + (credential.expires_in * 1000);
+        var lifetime = credential.created + (credential.expires_in * 1000);
 
         return lifetime < now;
     }

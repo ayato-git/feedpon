@@ -5,16 +5,16 @@
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
-            if (this.readyState !== 4) return;
+            if (xhr.readyState !== 4) return;
 
             var result: any = {
                 id: data.id,
-                status: this.status,
-                statusText: this.statusText
+                status: xhr.status,
+                statusText: xhr.statusText
             };
 
             try {
-                result.response = JSON.parse(this.responseText);
+                result.response = JSON.parse(xhr.responseText);
             } catch (e) {
                 result.error = e;
             }

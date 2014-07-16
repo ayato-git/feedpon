@@ -49,7 +49,7 @@ gulp.task('less', ['bower'], function() {
     .pipe(gulp.dest('app/cordova/www/css/'));
 });
 
-gulp.task('typescript', function() {
+gulp.task('typescript', ['bower'], function() {
   return gulp.src('src/ts/**/*.ts')
     .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.tsc({

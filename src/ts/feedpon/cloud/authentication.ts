@@ -1,5 +1,7 @@
 /// <reference path="interfaces.d.ts" />
 
+import $ = require('jquery');
+
 class Authentication implements IAuthentication {
     constructor(private client: IClient) {
     }

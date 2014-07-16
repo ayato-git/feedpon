@@ -8,9 +8,16 @@ import CredentialRepository = require('./persistence/credential-repository');
 import Enumerable = require('linqjs');
 import Framework7 = require('framework7');
 import Gateway = require('./cloud/gateway');
+import LongUrlRepository = require('./persistence/long-url-repository');
+import UrlExpandService = require('./services/url-expand-service');
+import UrlExpander = require('./network/url-expander');
 
 var client = new Client();
 var gateway = new Gateway(client);
+
+var urlExpander = new UrlExpander();
+var longUrlRepository = new LongUrlRepository(window.localStorage);
+var urlExpandService = new UrlExpandService(urlExpander, longUrlRepository);
 
 var credentialRepository = new CredentialRepository(window.localStorage);
 var credential = credentialRepository.get();
@@ -18,7 +25,13 @@ if (credential) {
     client.setCredential(credential);
 }
 
-$(document).on('deviceready', function() {
+if ('cordova' in window) {
+    $(document).on('deviceready', initialize);
+} else {
+    initialize();
+}
+
+function initialize() {
     var app = new Framework7();
     var mainView = app.addView('.view-main', {
         dynamicNavbar: true
@@ -26,7 +39,7 @@ $(document).on('deviceready', function() {
 
     $('.js-authenticate').on('click', authenticate);
     $('.js-reload-subscriptions').on('click', reloadSubscriptions);
-});
+}
 
 function reloadSubscriptions() {
     $.when(gateway.allSubscriptions(), gateway.unreadCounts())

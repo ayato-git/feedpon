@@ -11,5 +11,14 @@ interface ICredentialRepository {
 }
 
 interface Credential extends ExchangeTokenResponse {
-    authorized: number;
+    /**
+     * Unix time when this credential was created.
+     */
+    created: number;
+}
+
+interface ILongUrlRepository {
+    find(shortUrl: string): string;
+
+    store(shortUrl: string, longUrl: string): void;
 }
