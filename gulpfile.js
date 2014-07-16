@@ -109,6 +109,12 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
   });
 });
 
+gulp.task('connect', function() {
+  plugins.connect.server({
+    root: 'app/cordova/www/'
+  });
+});
+
 gulp.task('watch', function() {
   gulp.watch('src/jade/**/*.jade', ['jade']);
   gulp.watch('src/less/**/*.less', ['less']);
