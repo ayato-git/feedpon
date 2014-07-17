@@ -43,7 +43,8 @@ class UrlExpandService {
                 for (var shortUrl in longUrls) {
                     this.longUrlRepository.store(shortUrl, longUrls[shortUrl])
                 }
-            });
+            })
+            .then((longUrls) => $.extend(longUrls, expandedUrls));
     }
 }
 
