@@ -8,16 +8,9 @@ import CredentialRepository = require('./persistence/credential-repository');
 import Enumerable = require('linqjs');
 import Framework7 = require('framework7');
 import Gateway = require('./cloud/gateway');
-import LongUrlRepository = require('./persistence/long-url-repository');
-import UrlExpandService = require('./services/url-expand-service');
-import UrlExpander = require('./network/url-expander');
 
 var client = new Client();
 var gateway = new Gateway(client);
-
-var urlExpander = new UrlExpander();
-var longUrlRepository = new LongUrlRepository(window.localStorage);
-var urlExpandService = new UrlExpandService(urlExpander, longUrlRepository);
 
 var credentialRepository = new CredentialRepository(window.localStorage);
 var credential = credentialRepository.get();
@@ -44,7 +37,7 @@ function initialize() {
 function reloadSubscriptions() {
     $.when(gateway.allSubscriptions(), gateway.unreadCounts())
         .done((data1: any[], data2: any[]) => {
-            var $subscriptions = $('.subscriptions');
+            var $panel = $('.panel');
             var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
             var subscriptions: Subscription[] = data1[0];
             var unreadCounts: UnreadCount[] = data2[0].unreadcounts;
@@ -62,15 +55,40 @@ function reloadSubscriptions() {
                         };
                     }
                 )
-                .forEach(item => {
-                    var contents = subscriptionItemTemplate.render({
-                        id: item.subscription.id,
-                        title: item.subscription.title,
-                        unreadCount: item.unreadCount.count,
-                        website: item.subscription.website
-                    });
+                .selectMany(item => {
+                    return Enumerable
+                        .from(item.subscription.categories)
+                        .defaultIfEmpty({label: "Uncategorized", id: null})
+                        .select((category) => {
+                            return {
+                                category: category,
+                                subscription: item.subscription,
+                                unreadCount: item.unreadCount
+                           };
+                        });
+                })
+                .groupBy(item => item.category.label)
+                .forEach(items => {
+                    $('<div>')
+                        .addClass('content-block-title')
+                        .text(items.key())
+                        .appendTo($panel);
 
-                    $subscriptions.append(contents);
+                    var $listBlock = $('<div>')
+                        .addClass('list-block')
+                        .appendTo($panel);
+                    var $list = $('<ul>').appendTo($listBlock);
+
+                    items.forEach(item => {
+                        var subscriptionItem = subscriptionItemTemplate.render({
+                            id: item.subscription.id,
+                            title: item.subscription.title,
+                            unreadCount: item.unreadCount.count,
+                            website: item.subscription.website
+                        });
+
+                        $list.append(subscriptionItem);
+                    })
                 });
     })
 }
