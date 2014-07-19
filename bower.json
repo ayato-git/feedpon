@@ -14,7 +14,6 @@
   ],
   "dependencies": {
     "almond": "~0.2.9",
-    "bacon": "git://github.com/baconjs/bacon.js#~0.7.14",
     "es6-promise": "~1.0.0",
     "framework7": "~0.8.6",
     "hogan": "~3.0.2",

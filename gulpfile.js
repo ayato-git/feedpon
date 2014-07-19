@@ -2,9 +2,6 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({camelize: true});
 var argv = require('minimist')(process.argv.slice(2));
 
-var isWatched = argv._.indexOf('watch') >= 0;
-var isProduction = argv.production;
-
 gulp.task('bower', function(done) {
   var bower = require('bower');
 
@@ -35,23 +32,23 @@ gulp.task('copy:templates', function() {
 
 gulp.task('jade', function() {
   return gulp.src('src/jade/*.jade')
-    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
-    .pipe(plugins.jade({pretty: !isProduction}))
+    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
+    .pipe(plugins.jade({pretty: !argv.production}))
     .pipe(gulp.dest('app/cordova/www'));
 });
 
 gulp.task('less', ['bower'], function() {
   return gulp.src('src/less/index.less')
-    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
+    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.less({
-      compress: isProduction
+      compress: argv.production
     }))
     .pipe(gulp.dest('app/cordova/www/css/'));
 });
 
 gulp.task('typescript', ['bower'], function() {
   return gulp.src('src/ts/**/*.ts')
-    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
+    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.tsc({
       module: 'amd',
       noImplicitAny: true,
@@ -68,7 +65,7 @@ gulp.task('js:zepto', ['bower'], function() {
       'bower_components/zeptojs/src/deferred.js',
       'bower_components/zeptojs/src/ajax.js'
     ])
-    .pipe(isWatched ? plugins.plumber() : plugins.util.noop())
+    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.concat('zepto.js'))
     .pipe(gulp.dest('build/modules/'));
 });
@@ -80,10 +77,9 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
     name: 'almond',
     baseUrl: 'build/modules/',
     out: 'app/cordova/www/js/index.js',
-    optimize: isProduction ? 'uglify' : 'none',
+    optimize: argv.production ? 'uglify' : 'none',
     paths: {
       'almond': '../../bower_components/almond/almond',
-      'bacon': '../../bower_components/bacon/dist/Bacon',
       'framework7': '../../bower_components/framework7/dist/js/framework7',
       'hgn': '../../bower_components/requirejs-hogan/hgn',
       'hogan': '../../bower_components/hogan/web/builds/3.0.2/hogan-3.0.2.amd',
@@ -92,7 +88,7 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
       'text': '../../bower_components/requirejs-text/text'
     },
     include: ['feedpon/bootstrap'],
-    stubModules: ['text', 'hgn'],
+    stubModules: ['hgn', 'text'],
     insertRequire: ['feedpon/bootstrap'],
     shim: {
       'bacon': {
