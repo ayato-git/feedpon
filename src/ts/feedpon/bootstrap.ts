@@ -5,12 +5,17 @@ import Authentication = require('./cloud/authentication');
 import AuthenticationService = require('./services/authentication-service');
 import Client = require('./cloud/client');
 import CredentialRepository = require('./persistence/credential-repository');
-import Enumerable = require('linqjs');
 import Framework7 = require('framework7');
 import Gateway = require('./cloud/gateway');
+import SubscritionPanelController = require('./controllers/subscription-panel-controller');
 
 var client = new Client();
 var gateway = new Gateway(client);
+
+var subscritionPanelController = new SubscritionPanelController(
+    $('.panel-left'),
+    gateway
+);
 
 var credentialRepository = new CredentialRepository(window.localStorage);
 var credential = credentialRepository.get();
@@ -30,67 +35,11 @@ function initialize() {
         dynamicNavbar: true
     });
 
-    $('.js-authenticate').on('click', authenticate);
-    $('.js-reload-subscriptions').on('click', reloadSubscriptions);
-}
+    $('.js-authenticate')
+        .on('click', authenticate);
 
-function reloadSubscriptions() {
-    $.when(gateway.allSubscriptions(), gateway.unreadCounts())
-        .done((data1: any[], data2: any[]) => {
-            var $panel = $('.panel');
-            var subscriptionItemTemplate: any = require('hgn!./templates/subscription-item.mustache');
-            var subscriptions: Subscription[] = data1[0];
-            var unreadCounts: UnreadCount[] = data2[0].unreadcounts;
-
-            Enumerable
-                .from(subscriptions)
-                .join(
-                    unreadCounts,
-                    (subscription) => subscription.id,
-                    (unreadCount) => unreadCount.id,
-                    (subscription, unreadCount) => {
-                        return {
-                            subscription: subscription,
-                            unreadCount: unreadCount
-                        };
-                    }
-                )
-                .selectMany(item => {
-                    return Enumerable
-                        .from(item.subscription.categories)
-                        .defaultIfEmpty({label: "Uncategorized", id: null})
-                        .select((category) => {
-                            return {
-                                category: category,
-                                subscription: item.subscription,
-                                unreadCount: item.unreadCount
-                           };
-                        });
-                })
-                .groupBy(item => item.category.label)
-                .forEach(items => {
-                    $('<div>')
-                        .addClass('content-block-title')
-                        .text(items.key())
-                        .appendTo($panel);
-
-                    var $listBlock = $('<div>')
-                        .addClass('list-block')
-                        .appendTo($panel);
-                    var $list = $('<ul>').appendTo($listBlock);
-
-                    items.forEach(item => {
-                        var subscriptionItem = subscriptionItemTemplate.render({
-                            id: item.subscription.id,
-                            title: item.subscription.title,
-                            unreadCount: item.unreadCount.count,
-                            website: item.subscription.website
-                        });
-
-                        $list.append(subscriptionItem);
-                    })
-                });
-    })
+    $('.js-reload-subscriptions')
+        .on('click', () => subscritionPanelController.reload());
 }
 
 function authenticate() {

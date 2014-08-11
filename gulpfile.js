@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({camelize: true});
 var argv = require('minimist')(process.argv.slice(2));
+var isWatching = false;
 
 gulp.task('bower', function(done) {
   var bower = require('bower');
@@ -32,14 +33,14 @@ gulp.task('copy:templates', function() {
 
 gulp.task('jade', function() {
   return gulp.src('src/jade/*.jade')
-    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
+    .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.jade({pretty: !argv.production}))
     .pipe(gulp.dest('app/cordova/www'));
 });
 
 gulp.task('less', ['bower'], function() {
   return gulp.src('src/less/index.less')
-    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
+    .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.less({
       compress: argv.production
     }))
@@ -48,7 +49,7 @@ gulp.task('less', ['bower'], function() {
 
 gulp.task('typescript', ['bower'], function() {
   return gulp.src('src/ts/**/*.ts')
-    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
+    .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.tsc({
       module: 'amd',
       noImplicitAny: true,
@@ -65,7 +66,7 @@ gulp.task('js:zepto', ['bower'], function() {
       'bower_components/zeptojs/src/deferred.js',
       'bower_components/zeptojs/src/ajax.js'
     ])
-    .pipe(global.isWatching ? plugins.plumber() : plugins.util.noop())
+    .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.concat('zepto.js'))
     .pipe(gulp.dest('build/modules/'));
 });
@@ -112,6 +113,8 @@ gulp.task('connect', function() {
 });
 
 gulp.task('watch', function() {
+  isWatching = true;
+
   gulp.watch('src/jade/**/*.jade', ['jade']);
   gulp.watch('src/less/**/*.less', ['less']);
   gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['requirejs', 'copy:js']);

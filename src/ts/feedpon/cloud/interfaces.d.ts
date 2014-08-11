@@ -6,7 +6,9 @@ interface IClient {
     request<T>(method: string, path: string, data?: any): JQueryPromise<T>;
 }
 
-// Authentication API:
+/**
+ * Authentication API
+ */
 interface IAuthentication {
     authenticate(input: AuthenticateInput, windowOpener: WindowOpener): JQueryPromise<AuthenticateResponse>;
 
@@ -80,7 +82,15 @@ interface RevokeTokenResponse {
     expires_in: string;
 }
 
-// Categories API:
+/**
+ * Feedly API gateway
+ */
+interface IGateway extends ICategories, IFeeds, IMarkers, ISubscriptions {
+}
+
+/**
+ * Feedly API: Categories
+ */
 interface ICategories {
     allCategories(): JQueryPromise<Category[]>;
 
@@ -92,7 +102,9 @@ interface Category {
     label: string;
 }
 
-// Feeds API:
+/**
+ * Feedly API: Feeds
+ */
 interface IFeeds {
     findFeed(feedId: string): JQueryPromise<Feed>;
 }
@@ -109,7 +121,9 @@ interface Feed {
     status: string;
 }
 
-// Markers API:
+/**
+ * Feedly API: Markers
+ */
 interface IMarkers {
     unreadCounts(input?: UnreadCountsInput): JQueryPromise<UnreadCountsResponce>;
 
@@ -148,7 +162,9 @@ interface UnreadCount {
     id: string;
 }
 
-// Subscriptions API:
+/**
+ * Feedly API: Subscriptions
+ */
 interface ISubscriptions {
     allSubscriptions(): JQueryPromise<Subscription[]>;
 }
