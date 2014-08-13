@@ -92,9 +92,6 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
     stubModules: ['hgn', 'text'],
     insertRequire: ['feedpon/bootstrap'],
     shim: {
-      'bacon': {
-        deps: ['jquery']
-      },
       'framework7': {
         deps: ['jquery'],
         exports: 'Framework7'
