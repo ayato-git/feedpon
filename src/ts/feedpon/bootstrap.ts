@@ -1,7 +1,6 @@
 /// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
 
 import $ = require('jquery');
-import Authenticator = require('./cloud/authenticator');
 import AuthenticationService = require('./services/authentication-service');
 import Client = require('./cloud/client');
 import CredentialRepository = require('./persistence/credential-repository');
@@ -13,7 +12,7 @@ var client = new Client();
 var gateway = new Gateway(client);
 
 var authenticationService = new AuthenticationService(
-    new Authenticator(client),
+    gateway,
     new CredentialRepository(window.localStorage)
 );
 
@@ -39,6 +38,8 @@ function initialize() {
 
     $('.js-reload-subscriptions')
         .on('click', () => subscritionPanelController.reload());
+
+    authenticate();
 }
 
 function authenticate() {
@@ -53,7 +54,7 @@ function windowOpener(url: string): JQueryPromise<string> {
     var authWindow = window.open(url, '_blank');
     var defer = $.Deferred();
 
-    authWindow.addEventListener('loadstart', function(e) {
+    authWindow.addEventListener('loadstart', (e) => {
         var url = e.url;
 
         if (/^http:\/\/localhost\//.test(url)) {

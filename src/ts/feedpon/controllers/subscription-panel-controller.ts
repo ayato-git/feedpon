@@ -38,7 +38,7 @@ class SubscritionPanelController {
             .selectMany(item => {
                 return Enumerable
                     .from(item.subscription.categories)
-                    .defaultIfEmpty({label: "Uncategorized", id: null})
+                    .defaultIfEmpty({label: 'Uncategorized', id: null})
                     .select((category) => {
                         return {
                             category: category,
@@ -84,7 +84,7 @@ class SubscritionPanelController {
         $('<li>')
             .data('id', item.subscription.id)
             .addClass('subscription')
-            .append(subscriptionItem)
+            .html(subscriptionItem)
             .appendTo($list);
     }
 }
