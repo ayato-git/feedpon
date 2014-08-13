@@ -9,10 +9,6 @@ class CredentialRepository implements ICredentialRepository {
         return credential != null ? JSON.parse(credential) : null;
     }
 
-    exists(): boolean {
-        return !!this.storage.getItem('credential');
-    }
-
     store(credential: Credential): void {
         this.storage.setItem('credential', JSON.stringify(credential));
     }

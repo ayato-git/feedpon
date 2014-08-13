@@ -2,7 +2,7 @@
 
 import $ = require('jquery');
 
-class Authentication implements IAuthentication {
+class Authenticator implements IAuthentication {
     constructor(private client: IClient) {
     }
 
@@ -46,4 +46,4 @@ class Authentication implements IAuthentication {
     }
 }
 
-export = Authentication;
+export = Authenticator;

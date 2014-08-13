@@ -48,4 +48,4 @@ class UrlExpandService {
     }
 }
 
-export = UrlExpandService;;
+export = UrlExpandService;

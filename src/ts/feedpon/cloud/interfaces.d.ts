@@ -89,7 +89,7 @@ interface IGateway extends ICategories, IFeeds, IMarkers, ISubscriptions {
 }
 
 /**
- * Feedly API: Categories
+ * Categories API
  */
 interface ICategories {
     allCategories(): JQueryPromise<Category[]>;
@@ -103,7 +103,7 @@ interface Category {
 }
 
 /**
- * Feedly API: Feeds
+ * Feeds API
  */
 interface IFeeds {
     findFeed(feedId: string): JQueryPromise<Feed>;
@@ -122,7 +122,7 @@ interface Feed {
 }
 
 /**
- * Feedly API: Markers
+ * Markers API
  */
 interface IMarkers {
     unreadCounts(input?: UnreadCountsInput): JQueryPromise<UnreadCountsResponce>;
@@ -163,7 +163,7 @@ interface UnreadCount {
 }
 
 /**
- * Feedly API: Subscriptions
+ * Subscriptions API
  */
 interface ISubscriptions {
     allSubscriptions(): JQueryPromise<Subscription[]>;

@@ -1,7 +1,7 @@
 /// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
 
 import $ = require('jquery');
-import Authentication = require('./cloud/authentication');
+import Authenticator = require('./cloud/authenticator');
 import AuthenticationService = require('./services/authentication-service');
 import Client = require('./cloud/client');
 import CredentialRepository = require('./persistence/credential-repository');
@@ -12,16 +12,15 @@ import SubscritionPanelController = require('./controllers/subscription-panel-co
 var client = new Client();
 var gateway = new Gateway(client);
 
+var authenticationService = new AuthenticationService(
+    new Authenticator(client),
+    new CredentialRepository(window.localStorage)
+);
+
 var subscritionPanelController = new SubscritionPanelController(
     $('.panel-left'),
     gateway
 );
-
-var credentialRepository = new CredentialRepository(window.localStorage);
-var credential = credentialRepository.get();
-if (credential) {
-    client.setCredential(credential);
-}
 
 if ('cordova' in window) {
     $(document).on('deviceready', initialize);
@@ -43,11 +42,6 @@ function initialize() {
 }
 
 function authenticate() {
-    var authenticationService = new AuthenticationService(
-        new Authentication(client),
-        credentialRepository
-    );
-
     authenticationService
         .authenticate(windowOpener)
         .done((response) => {

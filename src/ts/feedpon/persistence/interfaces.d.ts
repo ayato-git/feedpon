@@ -3,8 +3,6 @@
 interface ICredentialRepository {
     get(): Credential;
 
-    exists(): boolean;
-
     store(credential: Credential): void;
 
     delete(): void;
