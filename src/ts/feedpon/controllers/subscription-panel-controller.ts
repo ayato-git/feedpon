@@ -23,6 +23,8 @@ class SubscritionPanelController {
     }
 
     private handleResponses(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
+        this.$el.empty();
+
         Enumerable
             .from(subscriptions)
             .join(
