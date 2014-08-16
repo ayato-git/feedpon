@@ -1,25 +1,35 @@
-/// <reference path="../interfaces.d.ts" />
+/// <reference path="interfaces.d.ts" />
 
 import $ = require('jquery');
 import Enumerable = require('linqjs');
 
-class SubscritionPanelController {
+class SubscritionsController implements ISubscriptionsController{
     private $el: JQuery;
 
     private subscriptionItemTemplate: any = require('hgn!../templates/subscription-item.mustache');
 
-    constructor(el: JQuery, gateway: IGateway);
-    constructor(el: HTMLElement, gateway: IGateway);
-    constructor(el: any, private gateway: IGateway) {
-        this.$el = $(el);
+    constructor(el: JQuery, gateway: IGateway, mediator: IControllerMediator);
+    constructor(el: HTMLElement, gateway: IGateway, mediator: IControllerMediator);
+    constructor(el: any, private gateway: IGateway, private mediator: IControllerMediator) {
+        mediator.registerSubscriptionsController(this);
+
+        this.$el = $(el)
+            .on('click', '.subscription', this.subscriptionClicked.bind(this));
     }
 
-    reload(): JQueryPromise<any> {
+    load(): JQueryPromise<any> {
         return $
             .when(this.gateway.allSubscriptions(), this.gateway.unreadCounts())
             .done((data1: any[], data2: any[]) => {
                 this.handleResponses(data1[0], data2[0].unreadcounts)
             });
+    }
+
+    private subscriptionClicked(event: JQueryEventObject): void {
+        var $subscription = $(event.currentTarget);
+        var subscriptionId = $subscription.attr('id');
+
+        this.mediator.fetchStream(subscriptionId);
     }
 
     private handleResponses(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
@@ -84,11 +94,11 @@ class SubscritionPanelController {
         });
 
         $('<li>')
-            .data('id', item.subscription.id)
+            .attr('id', item.subscription.id)
             .addClass('subscription')
             .html(subscriptionItem)
             .appendTo($list);
     }
 }
 
-export = SubscritionPanelController;
+export = SubscritionsController;

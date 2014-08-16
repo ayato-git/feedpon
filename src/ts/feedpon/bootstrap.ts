@@ -3,10 +3,11 @@
 import $ = require('jquery');
 import AuthenticationService = require('./services/authentication-service');
 import Client = require('./cloud/client');
+import ControllerMediator = require('./interactions/controller-mediator');
 import CredentialRepository = require('./persistence/credential-repository');
 import Framework7 = require('framework7');
 import Gateway = require('./cloud/gateway');
-import SubscritionPanelController = require('./controllers/subscription-panel-controller');
+import SubscritionsController = require('./controllers/subscriptions-controller');
 
 var client = new Client();
 var gateway = new Gateway(client);
@@ -16,9 +17,11 @@ var authenticationService = new AuthenticationService(
     new CredentialRepository(window.localStorage)
 );
 
-var subscritionPanelController = new SubscritionPanelController(
+var controllerMediator = new ControllerMediator();
+var subscritionsController = new SubscritionsController(
     $('.panel-left'),
-    gateway
+    gateway,
+    controllerMediator
 );
 
 if ('cordova' in window) {
@@ -37,13 +40,13 @@ function initialize() {
         .on('click', authenticate);
 
     $('.js-reload-subscriptions')
-        .on('click', () => subscritionPanelController.reload());
+        .on('click', () => subscritionsController.load());
 
-    authenticate();
+    authenticate().done(() => subscritionsController.load());
 }
 
 function authenticate() {
-    authenticationService
+    return authenticationService
         .authenticate(windowOpener)
         .done((response) => {
             client.setCredential(response);

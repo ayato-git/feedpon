@@ -106,7 +106,7 @@ interface Category {
  * Feeds API
  */
 interface IFeeds {
-    findFeed(feedId: string): JQueryPromise<Feed>;
+    getFeed(feedId: string): JQueryPromise<Feed>;
 }
 
 interface Feed {
@@ -160,6 +160,74 @@ interface UnreadCount {
     count: number;
     updated: number;
     id: string;
+}
+
+/**
+ * Streams API
+ */
+interface IStreams {
+    getEntryIds(streamId: string, input?: GetStreamInput): JQueryPromise<GetEntryIdsResponse>;
+    getContents(streamId: string, input?: GetStreamInput): JQueryPromise<Content>;
+}
+
+interface GetStreamInput {
+    count?: number;
+    ranked?: string;
+    unreadOnly?: boolean;
+    newerThan?: number;
+    continuation?: string;
+}
+
+interface GetEntryIdsResponse {
+    ids: string[];
+    continuation: string;
+}
+
+interface Content {
+    continuation: string;
+    updated: number;
+    alternate: LinkObject[];
+    title: string;
+    id: string;
+    direction: string;
+    items: ContentItem[];
+}
+
+interface ContentItem {
+    published: number;
+    tags: ContentItemTag[];
+    alternate: LinkObject[];
+    updated: number;
+    title: string;
+    engagement: number;
+    categories: Category[];
+    id: string;
+    author: string;
+    origin: ContentItemOrigin;
+    content: ContentItemContent;
+    unread: boolean;
+    crawled: number;
+}
+
+interface LinkObject {
+    type: string;
+    href: string;
+}
+
+interface ContentItemTag {
+    id: string;
+    label: string;
+}
+
+interface ContentItemOrigin {
+    htmlUrl: string;
+    title: string;
+    streamId: string;
+}
+
+interface ContentItemContent {
+    direction: string;
+    content: string;
 }
 
 /**

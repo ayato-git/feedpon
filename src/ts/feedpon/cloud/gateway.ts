@@ -51,7 +51,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         return this.client.request('DELETE', '/v3/categories/' + categoryId);
     }
 
-    findFeed(feedId: string): JQueryPromise<Feed> {
+    getFeed(feedId: string): JQueryPromise<Feed> {
         return this.client.request('GET', '/v3/feeds/' + feedId);
     }
 
