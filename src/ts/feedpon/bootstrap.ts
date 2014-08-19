@@ -2,8 +2,8 @@
 
 import $ = require('jquery');
 import AuthenticationService = require('./services/authentication-service');
+import BackboneEvents = require('backbone-events-standalone');
 import Client = require('./cloud/client');
-import ControllerMediator = require('./interactions/controller-mediator');
 import CredentialRepository = require('./persistence/credential-repository');
 import Framework7 = require('framework7');
 import Gateway = require('./cloud/gateway');
@@ -17,11 +17,11 @@ var authenticationService = new AuthenticationService(
     new CredentialRepository(window.localStorage)
 );
 
-var controllerMediator = new ControllerMediator();
+var broadcaster = new BackboneEvents();
 var subscritionsController = new SubscritionsController(
     $('.panel-left'),
     gateway,
-    controllerMediator
+    broadcaster
 );
 
 if ('cordova' in window) {

@@ -81,6 +81,7 @@ gulp.task('requirejs', ['typescript', 'js:zepto', 'copy:templates'], function() 
     optimize: argv.production ? 'uglify' : 'none',
     paths: {
       'almond': '../../bower_components/almond/almond',
+      'backbone-events-standalone': '../../bower_components/backbone-events-standalone/backbone-events-standalone',
       'framework7': '../../bower_components/framework7/dist/js/framework7',
       'hgn': '../../bower_components/requirejs-hogan/hgn',
       'hogan': '../../bower_components/hogan/web/builds/3.0.2/hogan-3.0.2.amd',

@@ -1,18 +1,17 @@
 /// <reference path="interfaces.d.ts" />
 
 import $ = require('jquery');
+import BackboneEvents = require('backbone-events-standalone');
 import Enumerable = require('linqjs');
 
-class SubscritionsController implements ISubscriptionsController{
+class SubscritionsController {
     private $el: JQuery;
 
     private subscriptionItemTemplate: any = require('hgn!../templates/subscription-item.mustache');
 
-    constructor(el: JQuery, gateway: IGateway, mediator: IControllerMediator);
-    constructor(el: HTMLElement, gateway: IGateway, mediator: IControllerMediator);
-    constructor(el: any, private gateway: IGateway, private mediator: IControllerMediator) {
-        mediator.registerSubscriptionsController(this);
-
+    constructor(el: JQuery, gateway: IGateway, broadcaster: BackboneEvents);
+    constructor(el: HTMLElement, gateway: IGateway, broadcaster: BackboneEvents);
+    constructor(el: any, private gateway: IGateway, private broadcaster: BackboneEvents) {
         this.$el = $(el)
             .on('click', '.subscription', this.subscriptionClicked.bind(this));
     }
@@ -29,7 +28,7 @@ class SubscritionsController implements ISubscriptionsController{
         var $subscription = $(event.currentTarget);
         var subscriptionId = $subscription.attr('id');
 
-        this.mediator.fetchStream(subscriptionId);
+        this.broadcaster.trigger('fetchStream', subscriptionId);
     }
 
     private handleResponses(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
