@@ -58,7 +58,7 @@ class AuthenticationService {
                 response_type: 'code'
             }, this.windowOpener)
             .then<ExchangeTokenResponse>((response) => {
-                return this.feedlyGateway.exchange({
+                return this.feedlyGateway.exchangeToken({
                     code: response.code,
                     client_id: 'feedly',
                     client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
@@ -77,7 +77,7 @@ class AuthenticationService {
     }
 
     private doRefreshToken(credential: Credential, now: number): ng.IPromise<Credential> {
-        return this.feedlyGateway.refresh({
+        return this.feedlyGateway.refreshToken({
                 refresh_token: credential.refresh_token,
                 client_id: 'feedly',
                 client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',

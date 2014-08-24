@@ -37,15 +37,15 @@ class FeedlyGateway implements IFeedlyGateway {
         })
     }
 
-    exchange(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse> {
+    exchangeToken(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    refresh(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse> {
+    refreshToken(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    revoke(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse> {
+    revokeToken(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 

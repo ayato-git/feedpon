@@ -23,11 +23,11 @@ interface IFeedlyGateway extends IAuthenticationApi,
 interface IAuthenticationApi {
     authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse>;
 
-    exchange(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse>;
+    exchangeToken(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse>;
 
-    refresh(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse>;
+    refreshToken(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse>;
 
-    revoke(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse>;
+    revokeToken(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse>;
 }
 
 interface IWindowOpener {
