@@ -1,6 +1,3 @@
-/// <reference path="../cloud/interfaces.d.ts" />
-/// <reference path="../persistence/interfaces.d.ts" />
-
 import angular = require('angular');
 
 function isTokenExpired(credential: Credential, now: number): boolean {

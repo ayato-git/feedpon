@@ -1,5 +1,3 @@
-/// <reference path="../interfaces.d.ts" />
-
 interface IUrlExpander {
     expand(shortUrl: string): ng.IPromise<string>;
 

@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 class UrlExpander implements IUrlExpander {
     static API_URL: string = 'http://emonkak.appspot.com/expand';
 

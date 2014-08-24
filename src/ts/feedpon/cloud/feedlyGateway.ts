@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 class FeedlyGateway implements IFeedlyGateway {
     constructor(private $q: ng.IQService, public client: IFeedlyClient) {
     }
@@ -13,7 +11,7 @@ class FeedlyGateway implements IFeedlyGateway {
             '&scope=' + escape(input.scope) +
             (input.state != null ? '&state=' + escape(input.state) : '');
 
-        return windowOpener(authUrl).then<AuthenticateResponse>(function(url) {
+        return windowOpener(authUrl, input.redirect_uri).then<AuthenticateResponse>((url) => {
             var deferred = this.$q.defer();
             var matchesForCode = url.match(/[?&]code=([^&]*)/);
             var matchesForState = url.match(/[?&]state=([^&]*)/);

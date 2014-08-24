@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 class FeedlyClient implements IFeedlyClient {
     public credential: ExchangeTokenResponse;
 
@@ -16,7 +14,6 @@ class FeedlyClient implements IFeedlyClient {
 
         return this.$http({
             data: data,
-            dataType: 'json',
             headers: headers,
             method: method,
             url: this.endPoint + path,

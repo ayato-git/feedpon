@@ -1,7 +1,3 @@
-/// <reference path="../interfaces.d.ts" />
-/// <reference path="../network/interfaces.d.ts" />
-/// <reference path="../persistence/interfaces.d.ts" />
-
 import angular = require('angular');
 
 class UrlExpandService {

@@ -1,5 +1,3 @@
-/// <reference path="../cloud/interfaces.d.ts" />
-
 interface ICredentialRepository {
     get(): Credential;
 

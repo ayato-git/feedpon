@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 class LongUrlRepository implements ILongUrlRepository {
     constructor(private storage: Storage) {
     }

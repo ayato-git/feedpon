@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 import AuthenticationService = require('../services/authenticationService');
 
 class ContentController {

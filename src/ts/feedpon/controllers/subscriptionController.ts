@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 import Enumerable = require('linqjs');
 
 class SubscritionController {

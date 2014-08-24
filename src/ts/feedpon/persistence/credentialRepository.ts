@@ -1,5 +1,3 @@
-/// <reference path="interfaces.d.ts" />
-
 class CredentialRepository implements ICredentialRepository {
     constructor(private storage: Storage) {
     }

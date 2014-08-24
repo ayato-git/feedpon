@@ -1,5 +1,3 @@
-/// <reference path="../interfaces.d.ts" />
-
 interface IFeedlyClient {
     credential: ExchangeTokenResponse;
     endPoint: string;
@@ -31,7 +29,7 @@ interface IAuthenticationApi {
 }
 
 interface IWindowOpener {
-    (url: string): ng.IPromise<string>;
+    (url: string, redirectUrl: string): ng.IPromise<string>;
 }
 
 interface AuthenticateInput {
