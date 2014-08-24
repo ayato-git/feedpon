@@ -58,7 +58,7 @@ gulp.task('browserify', ['typescript'], function() {
     })
     .bundle()
     .pipe(source('index.js'))
-    .pipe(isProduction ? plugins.uglify() : plugins.util.noop())
+    .pipe(isProduction ? plugins.streamify(plugins.uglify()) : plugins.util.noop())
     .pipe(gulp.dest('app/cordova/www/js/'));
 });
 
