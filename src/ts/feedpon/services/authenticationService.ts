@@ -67,7 +67,7 @@ class AuthenticationService {
                 });
             })
             .then<Credential>((response) => {
-                var credential: Credential = $.extend({}, response);
+                var credential: Credential = angular.copy(response);
                 credential.created = now;
 
                 this.credentialRepository.store(credential);
@@ -85,6 +85,10 @@ class AuthenticationService {
             })
             .then<Credential>((response) => {
                 var newCredential: Credential = angular.extend({}, credential, response);
+                newCredential.created = now;
+
+                this.credentialRepository.store(newCredential);
+
                 return newCredential;
             });
     }
