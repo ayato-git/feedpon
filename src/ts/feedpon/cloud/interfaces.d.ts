@@ -1,26 +1,37 @@
 /// <reference path="../interfaces.d.ts" />
 
-interface IClient {
+interface IFeedlyClient {
+    credential: ExchangeTokenResponse;
     endPoint: string;
+    request<T>(method: string, path: string, data?: any): ng.IPromise<T>;
+}
 
-    request<T>(method: string, path: string, data?: any): JQueryPromise<T>;
+/**
+ * Feedly API gateway
+ */
+interface IFeedlyGateway extends IAuthenticationApi,
+                           ICategoriesApi,
+                           IFeedsApi,
+                           IMarkersApi,
+                           ISubscriptionsApi {
+    client: IFeedlyClient;
 }
 
 /**
  * Authentication API
  */
-interface IAuthentication {
-    authenticate(input: AuthenticateInput, windowOpener: WindowOpener): JQueryPromise<AuthenticateResponse>;
+interface IAuthenticationApi {
+    authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse>;
 
-    exchange(input: ExchangeTokenInput): JQueryPromise<ExchangeTokenResponse>;
+    exchange(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse>;
 
-    refresh(input: RefreshTokenInput): JQueryPromise<RefreshTokenResponse>;
+    refresh(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse>;
 
-    revoke(input: RevokeTokenInput): JQueryPromise<RevokeTokenResponse>;
+    revoke(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse>;
 }
 
-interface WindowOpener {
-    (url: string): JQueryPromise<string>;
+interface IWindowOpener {
+    (url: string): ng.IPromise<string>;
 }
 
 interface AuthenticateInput {
@@ -83,18 +94,12 @@ interface RevokeTokenResponse {
 }
 
 /**
- * Feedly API gateway
- */
-interface IGateway extends ICategories, IFeeds, IMarkers, ISubscriptions {
-}
-
-/**
  * Categories API
  */
-interface ICategories {
-    allCategories(): JQueryPromise<Category[]>;
+interface ICategoriesApi {
+    allCategories(): ng.IPromise<Category[]>;
 
-    deleteCategory(categoryId: string): JQueryPromise<string>;
+    deleteCategory(categoryId: string): ng.IPromise<string>;
 }
 
 interface Category {
@@ -105,8 +110,8 @@ interface Category {
 /**
  * Feeds API
  */
-interface IFeeds {
-    getFeed(feedId: string): JQueryPromise<Feed>;
+interface IFeedsApi {
+    getFeed(feedId: string): ng.IPromise<Feed>;
 }
 
 interface Feed {
@@ -124,26 +129,26 @@ interface Feed {
 /**
  * Markers API
  */
-interface IMarkers {
-    unreadCounts(input?: UnreadCountsInput): JQueryPromise<UnreadCountsResponce>;
+interface IMarkersApi {
+    unreadCounts(input?: UnreadCountsInput): ng.IPromise<UnreadCountsResponce>;
 
-    markAsReadForEntries(entryId: string): JQueryPromise<void>;
-    markAsReadForEntries(entryIds: string[]): JQueryPromise<void>;
+    markAsReadForEntries(entryId: string): ng.IPromise<void>;
+    markAsReadForEntries(entryIds: string[]): ng.IPromise<void>;
 
-    markAsReadForFeeds(feedId: string): JQueryPromise<void>;
-    markAsReadForFeeds(feedIds: string[]): JQueryPromise<void>;
+    markAsReadForFeeds(feedId: string): ng.IPromise<void>;
+    markAsReadForFeeds(feedIds: string[]): ng.IPromise<void>;
 
-    markAsReadForCetegories(categoryId: string): JQueryPromise<void>;
-    markAsReadForCetegories(categoryIds: string[]): JQueryPromise<void>;
+    markAsReadForCetegories(categoryId: string): ng.IPromise<void>;
+    markAsReadForCetegories(categoryIds: string[]): ng.IPromise<void>;
 
-    keepUnreadForEntries(entryId: string): JQueryPromise<void>;
-    keepUnreadForEntries(entryIds: string[]): JQueryPromise<void>;
+    keepUnreadForEntries(entryId: string): ng.IPromise<void>;
+    keepUnreadForEntries(entryIds: string[]): ng.IPromise<void>;
 
-    keepUnreadForFeeds(feedId: string): JQueryPromise<void>;
-    keepUnreadForFeeds(feedIds: string[]): JQueryPromise<void>;
+    keepUnreadForFeeds(feedId: string): ng.IPromise<void>;
+    keepUnreadForFeeds(feedIds: string[]): ng.IPromise<void>;
 
-    keepUnreadForCetegories(categoryId: string): JQueryPromise<void>;
-    keepUnreadForCetegories(categoryIds: string[]): JQueryPromise<void>;
+    keepUnreadForCetegories(categoryId: string): ng.IPromise<void>;
+    keepUnreadForCetegories(categoryIds: string[]): ng.IPromise<void>;
 }
 
 interface UnreadCountsInput {
@@ -165,9 +170,9 @@ interface UnreadCount {
 /**
  * Streams API
  */
-interface IStreams {
-    getEntryIds(streamId: string, input?: GetStreamInput): JQueryPromise<GetEntryIdsResponse>;
-    getContents(streamId: string, input?: GetStreamInput): JQueryPromise<Content>;
+interface IStreamsApi {
+    getEntryIds(streamId: string, input?: GetStreamInput): ng.IPromise<GetEntryIdsResponse>;
+    getContents(streamId: string, input?: GetStreamInput): ng.IPromise<Content>;
 }
 
 interface GetStreamInput {
@@ -233,8 +238,8 @@ interface ContentItemContent {
 /**
  * Subscriptions API
  */
-interface ISubscriptions {
-    allSubscriptions(): JQueryPromise<Subscription[]>;
+interface ISubscriptionsApi {
+    allSubscriptions(): ng.IPromise<Subscription[]>;
 }
 
 interface Subscription {

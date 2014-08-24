@@ -2,25 +2,31 @@
 /// <reference path="../network/interfaces.d.ts" />
 /// <reference path="../persistence/interfaces.d.ts" />
 
-import $ = require('jquery');
+import angular = require('angular');
 
 class UrlExpandService {
-    constructor(private urlExpander: IUrlExpander,
+    constructor(private $q: ng.IQService,
+                private urlExpander: IUrlExpander,
                 private longUrlRepository: ILongUrlRepository) {
     }
 
-    expand(shortUrl: string): JQueryPromise<string> {
+    expand(shortUrl: string): ng.IPromise<string> {
         var longUrl = this.longUrlRepository.find(shortUrl);
         if (longUrl != null) {
-            return $.Deferred().resolve(longUrl).promise();
+            var deferred = this.$q.defer();
+            deferred.resolve(longUrl);
+            return deferred.promise;
         }
 
         return this.urlExpander
             .expand(shortUrl)
-            .done((longUrl) => this.longUrlRepository.store(shortUrl, longUrl));
+            .then((longUrl) => {
+                this.longUrlRepository.store(shortUrl, longUrl);
+                return longUrl;
+            });
     }
 
-    expandAll(shortUrls: string[]): JQueryPromise<{[key: string]: string}> {
+    expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}> {
         var expandedUrls: {[key: string]: string} = {};
         var unexpandedUrls: string[] = [];
 
@@ -34,17 +40,19 @@ class UrlExpandService {
         });
 
         if (unexpandedUrls.length === 0) {
-            return $.Deferred().resolve(expandedUrls).promise();
+            var deferred = this.$q.defer();
+            deferred.resolve(expandedUrls);
+            return deferred.promise;
         }
 
         return this.urlExpander
             .expandAll(unexpandedUrls)
-            .done((longUrls) => {
+            .then((longUrls) => {
                 for (var shortUrl in longUrls) {
                     this.longUrlRepository.store(shortUrl, longUrls[shortUrl])
                 }
-            })
-            .then((longUrls) => $.extend(longUrls, expandedUrls));
+                return angular.extend(longUrls, expandedUrls);
+            });
     }
 }
 

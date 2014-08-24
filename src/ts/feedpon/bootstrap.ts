@@ -1,71 +1,50 @@
-/// <amd-dependency path="hgn!./templates/subscription-item.mustache" />
+/// <reference path="interfaces.d.ts" />
 
-import $ = require('jquery');
-import AuthenticationService = require('./services/authentication-service');
-import BackboneEvents = require('backbone-events-standalone');
-import Client = require('./cloud/client');
-import CredentialRepository = require('./persistence/credential-repository');
-import Framework7 = require('framework7');
-import Gateway = require('./cloud/gateway');
-import SubscritionsController = require('./controllers/subscriptions-controller');
+import angular = require('angular');
+import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
 
-var client = new Client();
-var gateway = new Gateway(client);
+import FeedlyClient = require('./cloud/feedlyClient');
+import FeedlyGateway = require('./cloud/feedlyGateway');
+import ContentController = require('./controllers/contentController');
+import SubscriptionController = require('./controllers/subscriptionController');
+import CredentialRepository = require('./persistence/credentialRepository');
+import AuthenticationService = require('./services/authenticationService');
 
-var authenticationService = new AuthenticationService(
-    gateway,
-    new CredentialRepository(window.localStorage)
-);
+angular.module('feedpon.cloud', [])
+    .constant('feedlyEndPoint', 'http://cloud.feedly.com')
+    .service('feedlyClient', ['$http', 'feedlyEndPoint', FeedlyClient])
+    .service('feedlyGateway', ['$q', 'feedlyClient', FeedlyGateway]);
 
-var broadcaster = new BackboneEvents();
-var subscritionsController = new SubscritionsController(
-    $('.panel-left'),
-    gateway,
-    broadcaster
-);
+angular.module('feedpon.controllers', ['feedpon.cloud', 'feedpon.services', 'ionic'])
+    .controller('ContentController', [
+        '$scope',
+        '$ionicSideMenuDelegate',
+        'authenticationService',
+        ContentController
+    ])
+    .controller('SubscriptionController', [
+        '$scope',
+        '$q',
+        'feedlyGateway',
+        SubscriptionController
+    ]);
 
-if ('cordova' in window) {
-    $(document).on('deviceready', initialize);
-} else {
-    initialize();
-}
+angular.module('feedpon.persistence', [])
+    .value('storage', window.localStorage)
+    .service('credentialRepository', ['storage', CredentialRepository]);
 
-function initialize() {
-    var app = new Framework7();
-    var mainView = app.addView('.view-main', {
-        dynamicNavbar: true
-    });
+angular.module('feedpon.services', ['feedpon.cloud', 'feedpon.persistence'])
+    .factory('windowOpener', [
+        '$q',
+        '$window',
+        cordovaWindowOpenerFactory
+    ])
+    .service('authenticationService', [
+        '$q',
+        'windowOpener',
+        'feedlyGateway',
+        'credentialRepository',
+        AuthenticationService
+    ]);
 
-    $('.js-authenticate')
-        .on('click', authenticate);
-
-    $('.js-reload-subscriptions')
-        .on('click', () => subscritionsController.load());
-
-    authenticate().done(() => subscritionsController.load());
-}
-
-function authenticate() {
-    return authenticationService
-        .authenticate(windowOpener)
-        .done((response) => {
-            client.setCredential(response);
-        });
-}
-
-function windowOpener(url: string): JQueryPromise<string> {
-    var authWindow = window.open(url, '_blank');
-    var defer = $.Deferred();
-
-    authWindow.addEventListener('loadstart', (e) => {
-        var url = e.url;
-
-        if (/^http:\/\/localhost\//.test(url)) {
-            authWindow.close();
-
-            defer.resolveWith(authWindow, [url]);
-        }
-    });
-
-    return defer.promise();
-};
+angular.module('feedpon', ['feedpon.controllers']);

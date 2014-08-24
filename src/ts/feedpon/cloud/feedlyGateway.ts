@@ -1,65 +1,71 @@
 /// <reference path="interfaces.d.ts" />
 
-class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscriptions {
-    constructor(private client: IClient) {
+class FeedlyGateway implements IFeedlyGateway {
+    constructor(private $q: ng.IQService, public client: IFeedlyClient) {
     }
 
-    authenticate(input: AuthenticateInput, windowOpener: WindowOpener): JQueryPromise<AuthenticateResponse> {
-        var authUrl = this.client.endPoint + '/v3/auth/auth?' + $.param(input);
+    authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse> {
+        var escape = encodeURIComponent;
+        var authUrl = this.client.endPoint + '/v3/auth/auth' +
+            '?response_type=' + escape(input.response_type) +
+            '&client_id=' + escape(input.client_id) +
+            '&redirect_uri=' + escape(input.redirect_uri) +
+            '&scope=' + escape(input.scope) +
+            (input.state != null ? '&state=' + escape(input.state) : '');
 
         return windowOpener(authUrl).then<AuthenticateResponse>(function(url) {
-            var defer = $.Deferred();
+            var deferred = this.$q.defer();
             var matchesForCode = url.match(/[?&]code=([^&]*)/);
             var matchesForState = url.match(/[?&]state=([^&]*)/);
 
             if (matchesForCode) {
-                defer.resolveWith(this, [{
+                deferred.resolve([{
                     code: matchesForCode[1],
                     state: matchesForState ? matchesForState[1] : null
                 }]);
             } else {
                 var matchesForError = url.match(/[&?]error=([^&]+)/);
                 if (matchesForError) {
-                    defer.rejectWith(this, [{
+                    deferred.reject([{
                         code: matchesForCode[1],
                         state: matchesForState ? matchesForState[1] : null
                     }]);
                 }
             }
 
-            return defer.promise();
+            return deferred.promise;
         })
     }
 
-    exchange(input: ExchangeTokenInput): JQueryPromise<ExchangeTokenResponse> {
+    exchange(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    refresh(input: RefreshTokenInput): JQueryPromise<RefreshTokenResponse> {
+    refresh(input: RefreshTokenInput): ng.IPromise<RefreshTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    revoke(input: RevokeTokenInput): JQueryPromise<RevokeTokenResponse> {
+    revoke(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse> {
         return this.client.request('POST', '/v3/auth/token', input);
     }
 
-    allCategories(): JQueryPromise<Category[]> {
+    allCategories(): ng.IPromise<Category[]> {
         return this.client.request('GET', '/v3/categories');
     }
 
-    deleteCategory(categoryId: string): JQueryPromise<string> {
+    deleteCategory(categoryId: string): ng.IPromise<string> {
         return this.client.request('DELETE', '/v3/categories/' + categoryId);
     }
 
-    getFeed(feedId: string): JQueryPromise<Feed> {
+    getFeed(feedId: string): ng.IPromise<Feed> {
         return this.client.request('GET', '/v3/feeds/' + feedId);
     }
 
-    unreadCounts(input: UnreadCountsInput = {}): JQueryPromise<UnreadCountsResponce> {
+    unreadCounts(input: UnreadCountsInput = {}): ng.IPromise<UnreadCountsResponce> {
         return this.client.request('GET', '/v3/markers/counts', input);
     }
 
-    markAsReadForEntries(entryIds: any): JQueryPromise<void> {
+    markAsReadForEntries(entryIds: any): ng.IPromise<void> {
         if (Array.isArray(entryIds)) {
             var input = JSON.stringify({
                 action: 'markAsRead',
@@ -72,7 +78,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    markAsReadForFeeds(feedIds: any): JQueryPromise<void> {
+    markAsReadForFeeds(feedIds: any): ng.IPromise<void> {
         if (Array.isArray(feedIds)) {
             var input = JSON.stringify({
                 action: 'markAsRead',
@@ -85,7 +91,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    markAsReadForCetegories(categoryIds: any): JQueryPromise<void> {
+    markAsReadForCetegories(categoryIds: any): ng.IPromise<void> {
         if (Array.isArray(categoryIds)) {
             var input = JSON.stringify({
                 action: 'markAsRead',
@@ -98,7 +104,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    keepUnreadForEntries(entryIds: any): JQueryPromise<void> {
+    keepUnreadForEntries(entryIds: any): ng.IPromise<void> {
         if (Array.isArray(entryIds)) {
             var input = JSON.stringify({
                 action: 'keepUnread',
@@ -111,7 +117,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    keepUnreadForFeeds(feedIds: any): JQueryPromise<void> {
+    keepUnreadForFeeds(feedIds: any): ng.IPromise<void> {
         if (Array.isArray(feedIds)) {
             var input = JSON.stringify({
                 action: 'keepUnread',
@@ -124,7 +130,7 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    keepUnreadForCetegories(categoryIds: any): JQueryPromise<void> {
+    keepUnreadForCetegories(categoryIds: any): ng.IPromise<void> {
         if (Array.isArray(categoryIds)) {
             var input = JSON.stringify({
                 action: 'keepUnread',
@@ -137,9 +143,9 @@ class Gateway implements IAuthentication, ICategories, IFeeds, IMarkers, ISubscr
         }
     }
 
-    allSubscriptions(): JQueryPromise<Subscription[]> {
+    allSubscriptions(): ng.IPromise<Subscription[]> {
         return this.client.request('GET', '/v3/subscriptions');
     }
 }
 
-export = Gateway;
+export = FeedlyGateway;

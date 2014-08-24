@@ -1,29 +1,39 @@
 /// <reference path="../cloud/interfaces.d.ts" />
 /// <reference path="../persistence/interfaces.d.ts" />
 
-import $ = require('jquery');
+import angular = require('angular');
 
 function isTokenExpired(credential: Credential, now: number): boolean {
     return credential.created + (credential.expires_in * 1000) < now;
 }
 
 class AuthenticationService {
-    constructor(private authentication: IAuthentication, private credentialRepository: ICredentialRepository) {
+    constructor(private $q: ng.IQService,
+                private windowOpener: IWindowOpener,
+                private feedlyGateway: IFeedlyGateway,
+                private credentialRepository: ICredentialRepository) {
     }
 
-    authenticate(windowOpener: WindowOpener, now: number = Date.now()): JQueryPromise<Credential> {
+    authenticate(now: number): ng.IPromise<Credential> {
         var credential = this.credentialRepository.get();
+        var result: ng.IPromise<Credential>;
+
         if (credential == null) {
             // Not authenticated yet.
-            return this.doAuthenticate(windowOpener, now);
-        }
-
-        if (isTokenExpired(credential, now)) {
+            result = this.doAuthenticate(now);
+        } else if (isTokenExpired(credential, now)) {
             // Require token refreshing.
-            return this.doRefreshToken(credential, now);
+            result = this.doRefreshToken(credential, now);
+        } else {
+            var deferred = this.$q.defer();
+            deferred.resolve(credential);
+            result = deferred.promise;
         }
 
-        return $.Deferred().resolve(credential).promise();
+        return result.then((newCredential) => {
+            this.feedlyGateway.client.credential = newCredential;
+            return newCredential;
+        });
     }
 
     isAuthorized(now: number = Date.now()): boolean {
@@ -39,16 +49,16 @@ class AuthenticationService {
         return true;
     }
 
-    private doAuthenticate(windowOpener: WindowOpener, now: number): JQueryPromise<Credential> {
-        return this.authentication
+    private doAuthenticate(now: number): ng.IPromise<Credential> {
+        return this.feedlyGateway
             .authenticate({
                 client_id: 'feedly',
                 redirect_uri: 'http://localhost',
                 scope: 'https://cloud.feedly.com/subscriptions',
                 response_type: 'code'
-            }, windowOpener)
+            }, this.windowOpener)
             .then<ExchangeTokenResponse>((response) => {
-                return this.authentication.exchange({
+                return this.feedlyGateway.exchange({
                     code: response.code,
                     client_id: 'feedly',
                     client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
@@ -66,16 +76,15 @@ class AuthenticationService {
             });
     }
 
-    private doRefreshToken(credential: Credential, now: number): JQueryPromise<Credential> {
-        return this.authentication.refresh({
+    private doRefreshToken(credential: Credential, now: number): ng.IPromise<Credential> {
+        return this.feedlyGateway.refresh({
                 refresh_token: credential.refresh_token,
                 client_id: 'feedly',
                 client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
                 grant_type: 'refresh_token',
             })
             .then<Credential>((response) => {
-                var newCredential: Credential = $.extend({}, credential, response);
-
+                var newCredential: Credential = angular.extend({}, credential, response);
                 return newCredential;
             });
     }

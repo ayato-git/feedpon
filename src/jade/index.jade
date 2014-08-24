@@ -1,6 +1,6 @@
 doctype html
 
-html
+html(ng-app="feedpon")
   head
     meta(charset="utf-8")
     meta(name="format-detection" content="telephone=no")
@@ -12,42 +12,33 @@ html
     title Feedpon
 
   body
-    // Status bar overlay for full screen mode (PhoneGap)
-    .statusbar-overlay
+    ion-side-menus
+      ion-side-menu-content(ng-controller="ContentController as content")
+        ion-header-bar
+          .buttons
+            button.button(ng-click="content.toggleLeft()")
+              i.icon.ion-navicon
+          h1.title Feedpon
 
-    // Panels overlay
-    .panel-overlay
+        ion-content
+          .button.button-full.button-positive(ng-click="content.authenticate()") Authenticate
 
-    // Left panel with reveal effect
-    .panel.panel-left.panel-reveal
+      ion-side-menu(ng-controller="SubscriptionController as subscription" side="left")
+        ion-header-bar
 
-    // Views
-    .views
-      // Your main view, should have "view-main" class
-      .view.view-main
-        // Top Navbar
-        .navbar
-          .navbar-inner
-            // We need cool sliding animation on title element, so we have additional "sliding" class
-            .left
-              // Right link contains only icon - additional "icon-only" class
-              // Additional "open-panel" class tells app to open panel when we click on this link
-              a.link.icon-only.open-panel(href='#')
-                i.icon.icon-bars-blue
-            .center.sliding Feedpon
-            .right
-              a.link.icon-only(href='#')
-                i.icon.ion-ios7-refresh-empty.js-reload-subscriptions(style='font-size: 34px')
+        ion-content
+          ion-refresher(pulling-text="Pull to refresh..." on-refresh="subscription.refresh()")
 
-        // Pages container, because we use fixed-through navbar and toolbar, it has additional appropriate classes
-        .pages.navbar-through.toolbar-through
-          // Page, "data-page" contains page name
-          .page(data-page='index')
-            // Scrollable page content
-            .page-content
-              .content-block
-                p
-                  a.button.js-authenticate Authenticate
+          ul.list
+            li(ng-repeat="category in categories")
+              .item.item-divider {{category.label}}
+
+              ul
+                li(ng-repeat="item in items | filter:{category: category}")
+                  a.item.item-icon-right(href="#")
+                    img(alt="favicon" width="16" height="16" src="https://www.google.com/s2/favicons?domain_url={{item.subscription.website}}&alt=feed")
+                    | &nbsp;{{item.subscription.title}}
+                    span.badge.badge-assertive(ng-if="item.unreadCount.count > 0") {{item.unreadCount.count}}
 
     script(src="cordova.js")
     script(src="js/index.js")
