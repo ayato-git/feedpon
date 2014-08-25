@@ -17,17 +17,17 @@ class FeedlyGateway implements IFeedlyGateway {
             var matchesForState = url.match(/[?&]state=([^&]*)/);
 
             if (matchesForCode) {
-                deferred.resolve([{
+                deferred.resolve({
                     code: matchesForCode[1],
                     state: matchesForState ? matchesForState[1] : null
-                }]);
+                });
             } else {
                 var matchesForError = url.match(/[&?]error=([^&]+)/);
                 if (matchesForError) {
-                    deferred.reject([{
+                    deferred.reject({
                         code: matchesForCode[1],
                         state: matchesForState ? matchesForState[1] : null
-                    }]);
+                    });
                 }
             }
 

@@ -18,6 +18,7 @@ angular.module('feedpon.cloud', [])
 angular.module('feedpon.controllers', ['feedpon.cloud', 'feedpon.services', 'ionic'])
     .controller('ContentController', [
         '$scope',
+        '$ionicLoading',
         '$ionicSideMenuDelegate',
         'authenticationService',
         ContentController
@@ -48,3 +49,13 @@ angular.module('feedpon.services', ['feedpon.cloud', 'feedpon.persistence'])
     ]);
 
 angular.module('feedpon', ['feedpon.controllers']);
+
+if ('cordova' in window) {
+    document.addEventListener('deviceready', initialize, false);
+} else {
+    initialize();
+}
+
+function initialize(): void {
+    angular.bootstrap(document, ['feedpon']);
+}
