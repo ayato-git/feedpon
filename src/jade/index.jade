@@ -21,6 +21,10 @@ html
           h1.title Feedpon
 
         ion-content
+          ul.list
+            li.item(ng-repeat="item in contents.items")
+              h2 {{item.title}}
+              iframe(srcdoc="{{item.content.content}}" sandbox seamless)
 
       ion-side-menu(ng-controller="SubscriptionController as subscription" side="left")
         ion-header-bar
@@ -34,7 +38,7 @@ html
 
               ul
                 li(ng-repeat="item in items | filter:{category: category}")
-                  a.item.item-icon-right(href="#")
+                  a.item.item-icon-right(href="#" ng-click="subscription.select(item.subscription)")
                     img(alt="favicon" width="16" height="16" src="https://www.google.com/s2/favicons?domain_url={{item.subscription.website}}&alt=feed")
                     | &nbsp;{{item.subscription.title}}
                     span.badge.badge-assertive(ng-if="item.unreadCount.count > 0") {{item.unreadCount.count}}

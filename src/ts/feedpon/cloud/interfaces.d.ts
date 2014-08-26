@@ -8,10 +8,11 @@ interface IFeedlyClient {
  * Feedly API gateway
  */
 interface IFeedlyGateway extends IAuthenticationApi,
-                           ICategoriesApi,
-                           IFeedsApi,
-                           IMarkersApi,
-                           ISubscriptionsApi {
+                                 ICategoriesApi,
+                                 IFeedsApi,
+                                 IMarkersApi,
+                                 IStreamsApi,
+                                 ISubscriptionsApi {
     client: IFeedlyClient;
 }
 
@@ -169,11 +170,12 @@ interface UnreadCount {
  * Streams API
  */
 interface IStreamsApi {
-    getEntryIds(streamId: string, input?: GetStreamInput): ng.IPromise<GetEntryIdsResponse>;
-    getContents(streamId: string, input?: GetStreamInput): ng.IPromise<Content>;
+    getEntryIds(input: GetStreamInput): ng.IPromise<GetEntryIdsResponse>;
+    getContents(input: GetStreamInput): ng.IPromise<Contents>;
 }
 
 interface GetStreamInput {
+    streamId: string;
     count?: number;
     ranked?: string;
     unreadOnly?: boolean;
@@ -186,7 +188,7 @@ interface GetEntryIdsResponse {
     continuation: string;
 }
 
-interface Content {
+interface Contents {
     continuation: string;
     updated: number;
     alternate: LinkObject[];

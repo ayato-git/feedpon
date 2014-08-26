@@ -141,6 +141,14 @@ class FeedlyGateway implements IFeedlyGateway {
         }
     }
 
+    getEntryIds(input: GetStreamInput): ng.IPromise<GetEntryIdsResponse> {
+        return this.client.request<GetEntryIdsResponse>('GET', '/v3/streams/ids', input);
+    }
+
+    getContents(input: GetStreamInput): ng.IPromise<Contents> {
+        return this.client.request<Contents>('GET', '/v3/streams/contents', input);
+    }
+
     allSubscriptions(): ng.IPromise<Subscription[]> {
         return this.client.request('GET', '/v3/subscriptions');
     }

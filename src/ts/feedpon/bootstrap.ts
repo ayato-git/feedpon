@@ -21,11 +21,14 @@ angular.module('feedpon.controllers', ['feedpon.cloud', 'feedpon.services', 'ion
         '$ionicLoading',
         '$ionicSideMenuDelegate',
         'authenticationService',
+        'feedlyGateway',
         ContentController
     ])
     .controller('SubscriptionController', [
         '$scope',
+        '$rootScope',
         '$q',
+        '$ionicSideMenuDelegate',
         'feedlyGateway',
         SubscriptionController
     ]);

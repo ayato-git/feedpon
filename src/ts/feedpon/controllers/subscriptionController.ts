@@ -2,7 +2,9 @@ import Enumerable = require('linqjs');
 
 class SubscritionController {
     constructor(private $scope: ISubscriptionScope,
+                private $rootScope: ng.IRootScopeService,
                 private $q: ng.IQService,
+                private $ionicSideMenuDelegate: any,
                 private feedlyGateway: IFeedlyGateway) {
     }
 
@@ -12,6 +14,11 @@ class SubscritionController {
                 this.handleResponses(responses[0], responses[1].unreadcounts)
             })
             .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
+    }
+
+    select(subscription: Subscription): void {
+        this.$rootScope.$broadcast('feedpon.fetchContents', subscription.id);
+        this.$ionicSideMenuDelegate.toggleLeft();
     }
 
     private handleResponses(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {

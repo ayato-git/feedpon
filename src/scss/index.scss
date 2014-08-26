@@ -5,3 +5,7 @@
     right: $item-padding;
   }
 }
+
+iframe[srcdoc] {
+  pointer-events: none;
+}

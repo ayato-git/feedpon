@@ -1,10 +1,16 @@
 import AuthenticationService = require('../services/authenticationService');
 
 class ContentController {
-    constructor(private $scope: ng.IScope,
+    constructor(private $scope: IContentScope,
                 private $ionicLoading: any,
                 private $ionicSideMenuDelegate: any,
-                private authenticationService: AuthenticationService) {
+                private authenticationService: AuthenticationService,
+                private feedlyGateway: IFeedlyGateway) {
+        $scope.$on(
+            'feedpon.fetchContents',
+            (event: ng.IAngularEvent, streamId: string) => {
+                this.fetchContents(streamId);
+            });
     }
 
     authenticate(): void {
@@ -17,6 +23,14 @@ class ContentController {
 
     toggleLeft(): void {
         this.$ionicSideMenuDelegate.toggleLeft();
+    }
+
+    fetchContents(streamId: string): void {
+        this.feedlyGateway
+            .getContents({streamId: streamId})
+            .then((contents) => {
+                this.$scope.contents = contents;
+            });
     }
 }
 
