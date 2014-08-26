@@ -1,5 +1,8 @@
 /// <reference path="../interfaces.d.ts" />
 
+/**
+ * @ngInject
+ */
 function windowOpenerFactory($q: ng.IQService, $window: ng.IWindowService): IWindowOpener {
     return function(url: string, redirectUrl: string): ng.IPromise<string> {
         var authWindow = $window.open(url, '_blank', 'location=no,toolbar=no');

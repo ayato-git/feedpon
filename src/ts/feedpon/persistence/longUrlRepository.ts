@@ -1,4 +1,7 @@
 class LongUrlRepository implements ILongUrlRepository {
+    /**
+     * @ngInject
+     */
     constructor(private storage: Storage) {
     }
 

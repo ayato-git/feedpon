@@ -1,7 +1,13 @@
 class FeedlyClient implements IFeedlyClient {
+    public endPoint: string;
+
     public credential: ExchangeTokenResponse;
 
-    constructor(private $http: ng.IHttpService, public endPoint: string) {
+    /**
+     * @ngInject
+     */
+    constructor(private $http: ng.IHttpService, feedlyEndPoint: string) {
+        this.endPoint = feedlyEndPoint;
     }
 
     request<T>(method: string, path: string, data?: any): ng.IPromise<T> {

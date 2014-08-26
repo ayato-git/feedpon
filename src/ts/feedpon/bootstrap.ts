@@ -1,55 +1,28 @@
-/// <reference path="interfaces.d.ts" />
-
+import AuthenticationService = require('./services/authenticationService');
+import ContentController = require('./controllers/contentController');
+import CredentialRepository = require('./persistence/credentialRepository');
+import FeedlyClient = require('./cloud/feedlyClient');
+import FeedlyGateway = require('./cloud/feedlyGateway');
+import SubscriptionController = require('./controllers/subscriptionController');
 import angular = require('angular');
 import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
 
-import FeedlyClient = require('./cloud/feedlyClient');
-import FeedlyGateway = require('./cloud/feedlyGateway');
-import ContentController = require('./controllers/contentController');
-import SubscriptionController = require('./controllers/subscriptionController');
-import CredentialRepository = require('./persistence/credentialRepository');
-import AuthenticationService = require('./services/authenticationService');
-
 angular.module('feedpon.cloud', [])
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')
-    .service('feedlyClient', ['$http', 'feedlyEndPoint', FeedlyClient])
-    .service('feedlyGateway', ['$q', 'feedlyClient', FeedlyGateway]);
+    .service('feedlyClient', FeedlyClient)
+    .service('feedlyGateway', FeedlyGateway);
 
 angular.module('feedpon.controllers', ['feedpon.cloud', 'feedpon.services', 'ionic'])
-    .controller('ContentController', [
-        '$scope',
-        '$ionicLoading',
-        '$ionicSideMenuDelegate',
-        'authenticationService',
-        'feedlyGateway',
-        ContentController
-    ])
-    .controller('SubscriptionController', [
-        '$scope',
-        '$rootScope',
-        '$q',
-        '$ionicSideMenuDelegate',
-        'feedlyGateway',
-        SubscriptionController
-    ]);
+    .controller('ContentController', ContentController)
+    .controller('SubscriptionController', SubscriptionController);
 
 angular.module('feedpon.persistence', [])
     .value('storage', window.localStorage)
-    .service('credentialRepository', ['storage', CredentialRepository]);
+    .service('credentialRepository', CredentialRepository);
 
 angular.module('feedpon.services', ['feedpon.cloud', 'feedpon.persistence'])
-    .factory('windowOpener', [
-        '$q',
-        '$window',
-        cordovaWindowOpenerFactory
-    ])
-    .service('authenticationService', [
-        '$q',
-        'windowOpener',
-        'feedlyGateway',
-        'credentialRepository',
-        AuthenticationService
-    ]);
+    .factory('windowOpener', cordovaWindowOpenerFactory)
+    .service('authenticationService', AuthenticationService);
 
 angular.module('feedpon', ['feedpon.controllers']);
 

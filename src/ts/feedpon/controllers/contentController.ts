@@ -1,6 +1,9 @@
 import AuthenticationService = require('../services/authenticationService');
 
 class ContentController {
+    /**
+     * @ngInject
+     */
     constructor(private $scope: IContentScope,
                 private $ionicLoading: any,
                 private $ionicSideMenuDelegate: any,

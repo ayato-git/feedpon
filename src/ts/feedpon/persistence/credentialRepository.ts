@@ -1,4 +1,7 @@
 class CredentialRepository implements ICredentialRepository {
+    /**
+     * @ngInject
+     */
     constructor(private storage: Storage) {
     }
 

@@ -1,6 +1,9 @@
 import angular = require('angular');
 
 class UrlExpandService {
+    /**
+     * @ngInject
+     */
     constructor(private $q: ng.IQService,
                 private urlExpander: IUrlExpander,
                 private longUrlRepository: ILongUrlRepository) {

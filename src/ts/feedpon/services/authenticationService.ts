@@ -5,6 +5,9 @@ function isTokenExpired(credential: Credential, now: number): boolean {
 }
 
 class AuthenticationService {
+    /**
+     * @ngInject
+     */
     constructor(private $q: ng.IQService,
                 private windowOpener: IWindowOpener,
                 private feedlyGateway: IFeedlyGateway,

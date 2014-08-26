@@ -1,6 +1,9 @@
 class UrlExpander implements IUrlExpander {
     static API_URL: string = 'http://emonkak.appspot.com/expand';
 
+    /**
+     * @ngInject
+     */
     constructor(private $http: ng.IHttpService) {
     }
 

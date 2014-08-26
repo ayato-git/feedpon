@@ -1,6 +1,9 @@
 import Enumerable = require('linqjs');
 
 class SubscritionController {
+    /**
+     * @ngInject
+     */
     constructor(private $scope: ISubscriptionScope,
                 private $rootScope: ng.IRootScopeService,
                 private $q: ng.IQService,
