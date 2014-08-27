@@ -729,10 +729,7 @@
      * all about: scheme urls are not handled
      */
     else if ([[url scheme] isEqualToString:@"about"]) {
-        if ([[url resourceSpecifier] isEqualToString:@"srcdoc"])
-            return YES;
-        else
-            return NO;
+        return NO;
     }
 
     /*
