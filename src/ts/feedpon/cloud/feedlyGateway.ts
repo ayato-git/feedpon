@@ -4,7 +4,7 @@ class FeedlyGateway implements IFeedlyGateway {
     /**
      * @ngInject
      */
-    constructor(private $q: ng.IQService, public feedlyClient: IFeedlyClient) {
+    constructor(private $q: ng.IQService, feedlyClient: IFeedlyClient) {
         this.client = feedlyClient;
     }
 

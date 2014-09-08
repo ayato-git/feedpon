@@ -11,23 +11,20 @@ gulp.task('bower', function(done) {
   });
 });
 
+gulp.task('copy', ['copy:fonts']);
+
 gulp.task('copy:fonts', ['bower'], function() {
   return gulp.src([
       'bower_components/ionic/fonts/*',
     ])
-    .pipe(gulp.dest('app/cordova/www/fonts'));
-});
-
-gulp.task('copy:templates', function() {
-  return gulp.src(['src/templates/*'])
-    .pipe(gulp.dest('build/modules/feedpon/templates'));
+    .pipe(gulp.dest('build/www/fonts'));
 });
 
 gulp.task('jade', function() {
   return gulp.src('src/jade/*.jade')
     .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.jade({pretty: !isProduction}))
-    .pipe(gulp.dest('app/cordova/www'));
+    .pipe(gulp.dest('build/www/'));
 });
 
 gulp.task('sass', ['bower'], function() {
@@ -35,7 +32,7 @@ gulp.task('sass', ['bower'], function() {
     .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
     .pipe(plugins.sass())
     .pipe(isProduction ? plugins.minifyCss() : plugins.util.noop())
-    .pipe(gulp.dest('app/cordova/www/css/'));
+    .pipe(gulp.dest('build/www/css/'));
 });
 
 gulp.task('typescript', ['bower'], function() {
@@ -59,16 +56,16 @@ gulp.task('browserify', ['typescript'], function() {
     .bundle()
     .pipe(source('index.js'))
     .pipe(isProduction ? plugins.streamify(plugins.uglify({
-      compress: {
-        angular: true
-      }
-    })) : plugins.util.noop())
-    .pipe(gulp.dest('app/cordova/www/js/'));
+        compress: {
+          angular: true
+        }
+      })) : plugins.util.noop())
+    .pipe(gulp.dest('build/www/js/'));
 });
 
 gulp.task('connect', function() {
   plugins.connect.server({
-    root: 'app/cordova/www/'
+    root: 'build/www/'
   });
 });
 
@@ -80,9 +77,15 @@ gulp.task('watch', function() {
   gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['browserify']);
 });
 
+gulp.task('symlink', ['copy', 'jade', 'sass', 'browserify'], function() {
+  gulp.src('build/www')
+    .pipe(plugins.symlink('app/chrome'))
+    .pipe(plugins.symlink('app/cordova'));
+});
+
 gulp.task('clean', function() {
-  return gulp.src(['build', 'app/cordova/www'])
+  return gulp.src(['build', 'app/chrome/www', 'app/cordova/www'])
     .pipe(plugins.clean());
 });
 
-gulp.task('default', ['jade', 'sass', 'browserify', 'copy:fonts']);
+gulp.task('default', ['symlink']);

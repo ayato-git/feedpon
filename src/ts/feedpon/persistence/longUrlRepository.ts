@@ -6,11 +6,11 @@ class LongUrlRepository implements ILongUrlRepository {
     }
 
     find(shortUrl: string): string {
-        return this.storage.getItem('shortUrl.' + shortUrl);
+        return this.storage['shortUrl.' + shortUrl];
     }
 
     store(shortUrl: string, longUrl: string): void {
-        this.storage.setItem('shortUrl.' + shortUrl, longUrl);
+        this.storage['shortUrl.' + shortUrl] = longUrl;
     }
 }
 

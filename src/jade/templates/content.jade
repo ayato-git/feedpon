@@ -1,0 +1,10 @@
+ion-view(title="Feedpon" ng-controller="ContentController as content")
+  ion-nav-buttons(side="left")
+    button.button(ng-click="content.toggleLeft()")
+      i.icon.ion-navicon
+
+  ion-content
+    ul.list
+      li.item(ng-repeat="item in contents.items")
+        h2 {{item.title}}
+        div(ng-bind-html="item.content.content")

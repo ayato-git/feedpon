@@ -1,5 +1,3 @@
-import AuthenticationService = require('../services/authenticationService');
-
 class ContentController {
     /**
      * @ngInject
@@ -7,7 +5,6 @@ class ContentController {
     constructor(private $scope: IContentScope,
                 private $ionicLoading: any,
                 private $ionicSideMenuDelegate: any,
-                private authenticationService: AuthenticationService,
                 private feedlyGateway: IFeedlyGateway) {
         $scope.$on(
             'feedpon.fetchContents',
@@ -16,24 +13,21 @@ class ContentController {
             });
     }
 
-    authenticate(): void {
-        this.$ionicLoading.show({
-            template: 'Authenticating...'
-        });
-        this.authenticationService.authenticate(Date.now())
-            .finally(() => this.$ionicLoading.hide());
-    }
-
     toggleLeft(): void {
         this.$ionicSideMenuDelegate.toggleLeft();
     }
 
     fetchContents(streamId: string): void {
+        this.$ionicLoading.show({
+            template: 'Loading...'
+        });
+
         this.feedlyGateway
             .getContents({streamId: streamId})
             .then((contents) => {
                 this.$scope.contents = contents;
-            });
+            })
+            .finally(() => this.$ionicLoading.hide());
     }
 }
 

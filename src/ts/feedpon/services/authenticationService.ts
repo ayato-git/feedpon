@@ -9,18 +9,17 @@ class AuthenticationService {
      * @ngInject
      */
     constructor(private $q: ng.IQService,
-                private windowOpener: IWindowOpener,
                 private feedlyGateway: IFeedlyGateway,
                 private credentialRepository: ICredentialRepository) {
     }
 
-    authenticate(now: number): ng.IPromise<Credential> {
+    authenticate(windowOpener: IWindowOpener, now: number): ng.IPromise<Credential> {
         var credential = this.credentialRepository.get();
         var result: ng.IPromise<Credential>;
 
         if (credential == null) {
             // Not authenticated yet.
-            result = this.doAuthenticate(now);
+            result = this.doAuthenticate(windowOpener, now);
         } else if (isTokenExpired(credential, now)) {
             // Require token refreshing.
             result = this.doRefreshToken(credential, now);
@@ -49,14 +48,14 @@ class AuthenticationService {
         return true;
     }
 
-    private doAuthenticate(now: number): ng.IPromise<Credential> {
+    private doAuthenticate(windowOpener: IWindowOpener, now: number): ng.IPromise<Credential> {
         return this.feedlyGateway
             .authenticate({
                 client_id: 'feedly',
                 redirect_uri: 'http://localhost',
                 scope: 'https://cloud.feedly.com/subscriptions',
                 response_type: 'code'
-            }, this.windowOpener)
+            }, windowOpener)
             .then<ExchangeTokenResponse>((response) => {
                 return this.feedlyGateway.exchangeToken({
                     code: response.code,
@@ -67,7 +66,7 @@ class AuthenticationService {
                 });
             })
             .then<Credential>((response) => {
-                var credential: Credential = angular.copy(response);
+                var credential: Credential = <Credential> angular.copy(response);
                 credential.created = now;
 
                 this.credentialRepository.store(credential);

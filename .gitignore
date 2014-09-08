@@ -1,7 +1,8 @@
 .DS_Store
 .gulp-tsc-tmp-*
-app/cordova/www/
+app/cordova/www
+app/cordova/node_modules
+app/chrome/www
 bower_components/
 build/
 node_modules/
-xcuserdata
