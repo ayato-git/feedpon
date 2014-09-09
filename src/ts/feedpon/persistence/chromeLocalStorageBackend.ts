@@ -9,7 +9,7 @@ class ChromeLocalStorageBackend implements IStorageBackend {
         var deferred = this.$q.defer();
         var credential = this.storage.get(keys, (itmes) => {
             if (chrome.runtime.lastError != null) {
-                deferred.reject(chrome.extension.lastError);
+                deferred.reject(chrome.runtime.lastError);
             } else {
                 deferred.resolve(itmes);
             }
@@ -21,7 +21,7 @@ class ChromeLocalStorageBackend implements IStorageBackend {
         var deferred = this.$q.defer<void>();
         this.storage.set(items, () => {
             if (chrome.runtime.lastError != null) {
-                deferred.reject(chrome.extension.lastError);
+                deferred.reject(chrome.runtime.lastError);
             } else {
                 deferred.resolve();
             }
@@ -35,7 +35,7 @@ class ChromeLocalStorageBackend implements IStorageBackend {
         var deferred = this.$q.defer<void>();
         this.storage.remove(keys, () => {
             if (chrome.runtime.lastError != null) {
-                deferred.reject(chrome.extension.lastError);
+                deferred.reject(chrome.runtime.lastError);
             } else {
                 deferred.resolve();
             }

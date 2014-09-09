@@ -13,10 +13,10 @@ interface Credential extends ExchangeTokenResponse {
     created: number;
 }
 
-interface ILongUrlRepository {
-    find(shortUrl: string): string;
+interface IExpandedUrlRepository {
+    find(url: string): ng.IPromise<string>;
 
-    store(shortUrl: string, longUrl: string): void;
+    put(url: string, expandedUrl: string): ng.IPromise<void>;
 }
 
 interface IStorageBackend {

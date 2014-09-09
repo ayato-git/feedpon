@@ -6,52 +6,51 @@ class UrlExpandService {
      */
     constructor(private $q: ng.IQService,
                 private urlExpandStrategy: IUrlExpandStrategy,
-                private longUrlRepository: ILongUrlRepository) {
+                private expanedUrlRepository: IExpandedUrlRepository) {
     }
 
-    expand(shortUrl: string): ng.IPromise<string> {
-        var longUrl = this.longUrlRepository.find(shortUrl);
-        if (longUrl != null) {
-            var deferred = this.$q.defer();
-            deferred.resolve(longUrl);
-            return deferred.promise;
+    expand(url: string): ng.IPromise<string> {
+        var expandedUrl = this.expanedUrlRepository.find(url);
+        if (expandedUrl != null) {
+            return this.$q.when(expandedUrl);
         }
 
-        return this.urlExpandStrategy
-            .expand(shortUrl)
-            .then((longUrl) => {
-                this.longUrlRepository.store(shortUrl, longUrl);
-                return longUrl;
+        return this.urlExpandStrategy.expand(url)
+            .then((expandedUrl) => {
+                return this.expanedUrlRepository.put(url, expandedUrl)
+                    .then(() => expandedUrl);
             });
     }
 
-    expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}> {
-        var expandedUrls: {[key: string]: string} = {};
-        var unexpandedUrls: string[] = [];
+    expandAll(urls: string[]): ng.IPromise<{[key: string]: string}> {
+        var results: {[key: string]: string} = {};
+        var processingUrls: string[] = [];
 
-        shortUrls.forEach((shortUrl) => {
-            var longUrl = this.longUrlRepository.find(shortUrl);
-            if (longUrl != null) {
-                expandedUrls[shortUrl] = longUrl;
-            } else {
-                unexpandedUrls.push(shortUrl);
-            }
+        var tasks = urls.map((url) => {
+            return this.expanedUrlRepository.find(url).then((expandedUrl) => {
+                if (expandedUrl != null) {
+                    results[url] = expandedUrl;
+                } else {
+                    processingUrls.push(url);
+                }
+            });
         });
 
-        if (unexpandedUrls.length === 0) {
-            var deferred = this.$q.defer();
-            deferred.resolve(expandedUrls);
-            return deferred.promise;
-        }
+        return this.$q.all(tasks).then(() => {
+            if (processingUrls.length === 0) {
+                return this.$q.when(results);
+            }
 
-        return this.urlExpandStrategy
-            .expandAll(unexpandedUrls)
-            .then((longUrls) => {
-                for (var shortUrl in longUrls) {
-                    this.longUrlRepository.store(shortUrl, longUrls[shortUrl])
-                }
-                return angular.extend(longUrls, expandedUrls);
-            });
+            return this.urlExpandStrategy
+                .expandAll(processingUrls)
+                .then((expandedUrls) => {
+                    var tasks = Object.keys(expandedUrls).map((url) => {
+                        return this.expanedUrlRepository.put(url, expandedUrls[url])
+                    });
+
+                    return this.$q.all(tasks).then(() => angular.extend(results, expandedUrls));
+                });
+        })
     }
 }
 

@@ -7,18 +7,18 @@ class UrlExpandStrategy implements IUrlExpandStrategy {
     constructor(private $http: ng.IHttpService) {
     }
 
-    expand(shortUrl: string): ng.IPromise<string> {
+    expand(url: string): ng.IPromise<string> {
         return this.$http({
                 method: 'GET',
                 url: UrlExpandStrategy.API_URL,
-                data: {url: shortUrl}
+                data: {url: url}
             })
-            .then((data: {[key: string]: string}) => data[shortUrl]);
+            .then((data: {[key: string]: string}) => data[url]);
     }
 
-    expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}> {
+    expandAll(urls: string[]): ng.IPromise<{[key: string]: string}> {
         return this.$http({
-            data: JSON.stringify(shortUrls),
+            data: JSON.stringify(urls),
             method: 'POST',
             url: UrlExpandStrategy.API_URL
         });
