@@ -1,24 +1,18 @@
-interface IFeedlyClient {
+interface IFeedlyClientService {
     credential: ExchangeTokenResponse;
     endPoint: string;
     request<T>(method: string, path: string, data?: any): ng.IPromise<T>;
 }
 
-/**
- * Feedly API gateway
- */
-interface IFeedlyGateway extends IAuthenticationApi,
-                                 ICategoriesApi,
-                                 IFeedsApi,
-                                 IMarkersApi,
-                                 IStreamsApi,
-                                 ISubscriptionsApi {
-    client: IFeedlyClient;
+interface IFeedlyGatewayService extends IAuthenticationApi,
+                                        ICategoriesApi,
+                                        IFeedsApi,
+                                        IMarkersApi,
+                                        IStreamsApi,
+                                        ISubscriptionsApi {
+    client: IFeedlyClientService;
 }
 
-/**
- * Authentication API
- */
 interface IAuthenticationApi {
     authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse>;
 
@@ -92,9 +86,6 @@ interface RevokeTokenResponse {
     expires_in: string;
 }
 
-/**
- * Categories API
- */
 interface ICategoriesApi {
     allCategories(): ng.IPromise<Category[]>;
 
@@ -106,9 +97,6 @@ interface Category {
     label: string;
 }
 
-/**
- * Feeds API
- */
 interface IFeedsApi {
     getFeed(feedId: string): ng.IPromise<Feed>;
 }
@@ -125,9 +113,6 @@ interface Feed {
     status: string;
 }
 
-/**
- * Markers API
- */
 interface IMarkersApi {
     unreadCounts(input?: UnreadCountsInput): ng.IPromise<UnreadCountsResponce>;
 
@@ -166,9 +151,6 @@ interface UnreadCount {
     id: string;
 }
 
-/**
- * Streams API
- */
 interface IStreamsApi {
     getEntryIds(input: GetStreamInput): ng.IPromise<GetEntryIdsResponse>;
     getContents(input: GetStreamInput): ng.IPromise<Contents>;
@@ -235,9 +217,6 @@ interface ContentItemContent {
     content: string;
 }
 
-/**
- * Subscriptions API
- */
 interface ISubscriptionsApi {
     allSubscriptions(): ng.IPromise<Subscription[]>;
 }
@@ -251,4 +230,10 @@ interface Subscription {
     velocity: number;
     topics: string[];
     visualUrl: string;
+}
+
+interface IUrlExpandStrategy {
+    expand(shortUrl: string): ng.IPromise<string>;
+
+    expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}>;
 }

@@ -1,9 +1,9 @@
 interface ICredentialRepository {
-    get(): Credential;
+    get(): ng.IPromise<Credential>;
 
-    store(credential: Credential): void;
+    put(credential: Credential): ng.IPromise<void>;
 
-    delete(): void;
+    delete(): ng.IPromise<void>;
 }
 
 interface Credential extends ExchangeTokenResponse {
@@ -17,4 +17,14 @@ interface ILongUrlRepository {
     find(shortUrl: string): string;
 
     store(shortUrl: string, longUrl: string): void;
+}
+
+interface IStorageBackend {
+    get(key: string): ng.IPromise<{[key: string]: any}>;
+    get(keys: string[]): ng.IPromise<{[key: string]: any}>;
+
+    set(items: {[key: string]: any}): ng.IPromise<void>;
+
+    remove(key: string): ng.IPromise<void>;
+    remove(keys: string[]): ng.IPromise<void>;
 }

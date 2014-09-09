@@ -5,12 +5,11 @@ class ContentController {
     constructor(private $scope: IContentScope,
                 private $ionicLoading: any,
                 private $ionicSideMenuDelegate: any,
-                private feedlyGateway: IFeedlyGateway) {
-        $scope.$on(
-            'feedpon.fetchContents',
-            (event: ng.IAngularEvent, streamId: string) => {
-                this.fetchContents(streamId);
-            });
+                private $stateParams: ng.ui.IStateParamsService,
+                private feedlyGatewayService: IFeedlyGatewayService) {
+        if ($stateParams['streamId']) {
+            this.fetchContents($stateParams['streamId']);
+        }
     }
 
     toggleLeft(): void {
@@ -22,8 +21,7 @@ class ContentController {
             template: 'Loading...'
         });
 
-        this.feedlyGateway
-            .getContents({streamId: streamId})
+        this.feedlyGatewayService.getContents({streamId: streamId})
             .then((contents) => {
                 this.$scope.contents = contents;
             })

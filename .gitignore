@@ -1,8 +1,9 @@
 .DS_Store
 .gulp-tsc-tmp-*
-app/cordova/www
-app/cordova/node_modules
-app/chrome/www
-bower_components/
-build/
-node_modules/
+/app/chrome/www
+/app/cordova/node_modules
+/app/cordova/www
+/bower_components
+/build
+/gulp-tsc-tmp-*
+/node_modules

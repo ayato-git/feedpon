@@ -1,4 +1,4 @@
-class UrlExpander implements IUrlExpander {
+class UrlExpandStrategy implements IUrlExpandStrategy {
     static API_URL: string = 'http://emonkak.appspot.com/expand';
 
     /**
@@ -10,7 +10,7 @@ class UrlExpander implements IUrlExpander {
     expand(shortUrl: string): ng.IPromise<string> {
         return this.$http({
                 method: 'GET',
-                url: UrlExpander.API_URL,
+                url: UrlExpandStrategy.API_URL,
                 data: {url: shortUrl}
             })
             .then((data: {[key: string]: string}) => data[shortUrl]);
@@ -20,9 +20,9 @@ class UrlExpander implements IUrlExpander {
         return this.$http({
             data: JSON.stringify(shortUrls),
             method: 'POST',
-            url: UrlExpander.API_URL
+            url: UrlExpandStrategy.API_URL
         });
     }
 }
 
-export = UrlExpander;
+export = UrlExpandStrategy;

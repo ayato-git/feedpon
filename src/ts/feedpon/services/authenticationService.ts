@@ -9,55 +9,52 @@ class AuthenticationService {
      * @ngInject
      */
     constructor(private $q: ng.IQService,
-                private feedlyGateway: IFeedlyGateway,
+                private feedlyGatewayService: IFeedlyGatewayService,
                 private credentialRepository: ICredentialRepository) {
     }
 
     authenticate(windowOpener: IWindowOpener, now: number): ng.IPromise<Credential> {
-        var credential = this.credentialRepository.get();
-        var result: ng.IPromise<Credential>;
-
-        if (credential == null) {
-            // Not authenticated yet.
-            result = this.doAuthenticate(windowOpener, now);
-        } else if (isTokenExpired(credential, now)) {
-            // Require token refreshing.
-            result = this.doRefreshToken(credential, now);
-        } else {
-            var deferred = this.$q.defer();
-            deferred.resolve(credential);
-            result = deferred.promise;
-        }
-
-        return result.then((newCredential) => {
-            this.feedlyGateway.client.credential = newCredential;
-            return newCredential;
-        });
+        return this.credentialRepository.get()
+            .then((credential) => {
+                if (credential == null) {
+                    // Not authenticated yet.
+                    return this.doAuthenticate(windowOpener, now);
+                } else if (isTokenExpired(credential, now)) {
+                    // Require token refreshing.
+                    return this.doRefreshToken(credential, now);
+                } else {
+                    var deferred = this.$q.defer();
+                    deferred.resolve(credential);
+                    return deferred.promise;
+                }
+            });
     }
 
-    isAuthorized(now: number = Date.now()): boolean {
-        var credential = this.credentialRepository.get();
-        if (credential == null) {
-            return false;
-        }
+    isAuthorized(now: number = Date.now()): ng.IPromise<boolean> {
+        return this.credentialRepository.get()
+            .then((credential) => {
+                if (credential == null) {
+                    return false;
+                }
 
-        if (isTokenExpired(credential, now)) {
-            return false;
-        }
+                if (isTokenExpired(credential, now)) {
+                    return false;
+                }
 
-        return true;
+                return true;
+            });
     }
 
     private doAuthenticate(windowOpener: IWindowOpener, now: number): ng.IPromise<Credential> {
-        return this.feedlyGateway
+        return this.feedlyGatewayService
             .authenticate({
                 client_id: 'feedly',
                 redirect_uri: 'http://localhost',
                 scope: 'https://cloud.feedly.com/subscriptions',
                 response_type: 'code'
             }, windowOpener)
-            .then<ExchangeTokenResponse>((response) => {
-                return this.feedlyGateway.exchangeToken({
+            .then((response) => {
+                return this.feedlyGatewayService.exchangeToken({
                     code: response.code,
                     client_id: 'feedly',
                     client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
@@ -65,30 +62,27 @@ class AuthenticationService {
                     grant_type: 'authorization_code'
                 });
             })
-            .then<Credential>((response) => {
+            .then((response) => {
                 var credential: Credential = <Credential> angular.copy(response);
                 credential.created = now;
 
-                this.credentialRepository.store(credential);
-
-                return credential;
+                return this.credentialRepository.put(credential).then(() => credential);
             });
     }
 
     private doRefreshToken(credential: Credential, now: number): ng.IPromise<Credential> {
-        return this.feedlyGateway.refreshToken({
+        return this.feedlyGatewayService.refreshToken({
                 refresh_token: credential.refresh_token,
                 client_id: 'feedly',
                 client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
                 grant_type: 'refresh_token',
             })
-            .then<Credential>((response) => {
+            .then((response) => {
                 var newCredential: Credential = angular.extend({}, credential, response);
                 newCredential.created = now;
 
-                this.credentialRepository.store(newCredential);
-
-                return newCredential;
+                return this.credentialRepository.put(newCredential)
+                    .then<Credential>(() => newCredential);
             });
     }
 }

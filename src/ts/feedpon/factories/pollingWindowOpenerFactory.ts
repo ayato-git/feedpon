@@ -1,9 +1,9 @@
 /**
  * @ngInject
  */
-function windowOpenerFactory($q: ng.IQService,
-                             $window: ng.IWindowService,
-                             $interval: ng.IIntervalService): IWindowOpener {
+function pollingWindowOpenerFactory($q: ng.IQService,
+                                    $window: ng.IWindowService,
+                                    $interval: ng.IIntervalService): IWindowOpener {
     return function(url: string, expectUrl: string): ng.IPromise<string> {
         var authWindow = $window.open(url, '_blank');
         var deferred = $q.defer();
@@ -28,4 +28,4 @@ function windowOpenerFactory($q: ng.IQService,
     }
 }
 
-export = windowOpenerFactory;
+export = pollingWindowOpenerFactory;

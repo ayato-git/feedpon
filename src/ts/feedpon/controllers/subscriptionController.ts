@@ -5,22 +5,24 @@ class SubscritionController {
      * @ngInject
      */
     constructor(private $scope: ISubscriptionScope,
-                private $rootScope: ng.IRootScopeService,
                 private $q: ng.IQService,
                 private $ionicSideMenuDelegate: any,
-                private feedlyGateway: IFeedlyGateway) {
+                private feedlyGatewayService: IFeedlyGatewayService) {
     }
 
     refresh(): void {
-        this.$q.all([this.feedlyGateway.allSubscriptions(), this.feedlyGateway.unreadCounts()])
+        this.$q
+            .all([
+                this.feedlyGatewayService.allSubscriptions(),
+                this.feedlyGatewayService.unreadCounts()
+            ])
             .then((responses) => {
                 this.handleResponses(responses[0], responses[1].unreadcounts)
             })
             .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
     }
 
-    select(subscription: Subscription): void {
-        this.$rootScope.$broadcast('feedpon.fetchContents', subscription.id);
+    toggleLeft(): void {
         this.$ionicSideMenuDelegate.toggleLeft();
     }
 

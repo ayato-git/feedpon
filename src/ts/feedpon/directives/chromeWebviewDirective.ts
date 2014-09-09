@@ -23,13 +23,13 @@ function provideChromeWebviewDirective(): ng.IDirective {
         restrict: 'E',
         scope: events,
         link: function postLink(scope, element, attrs) {
-            for (name in events) {
+            Object.keys(events).forEach(name => {
                 if (events[name].slice(1) in attrs) {
                     element.on(name, (event) => {
                         scope.$apply(() => scope[name]({$event: event}));
                     });
                 }
-            }
+            });
         }
     };
 }

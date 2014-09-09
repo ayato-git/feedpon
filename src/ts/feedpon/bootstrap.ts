@@ -1,51 +1,54 @@
 import AuthenticationService = require('./services/authenticationService');
+import ChromeLocalStorageBackend = require('./persistence/chromeLocalStorageBackend');
 import ContentController = require('./controllers/contentController');
 import CredentialRepository = require('./persistence/credentialRepository');
 import EntranceController = require('./controllers/entranceController');
-import FeedlyClient = require('./cloud/feedlyClient');
-import FeedlyGateway = require('./cloud/feedlyGateway');
+import FeedlyClientService = require('./services/feedlyClientService');
+import FeedlyGatewayService = require('./services/feedlyGatewayService');
+import LocalStorageBackend = require('./persistence/localStorageBackend');
 import SubscriptionController = require('./controllers/subscriptionController');
+import WelcomeController = require('./controllers/entranceController');
 import angular = require('angular');
 import chromeWebviewDirective = require('./directives/chromeWebviewDirective');
 import chromeWindowOpenerFactory = require('./factories/chromeWindowOpenerFactory');
 import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
-import pollingWindowOpenerFactory = require('./factories/pollingWindowOpenerFactory');
 
 require('angular-animate');
 require('angular-sanitize');
 require('angular-ui-router');
 require('ionic-angular');
 
-angular.module('feedpon.cloud', [])
-    .constant('feedlyEndPoint', 'http://cloud.feedly.com')
-    .service('feedlyClient', FeedlyClient)
-    .service('feedlyGateway', FeedlyGateway);
-
 angular.module('feedpon.controllers', [
-        'feedpon.cloud',
         'feedpon.services',
         'ionic',
         'ngSanitize'
     ])
     .controller('EntranceController', EntranceController)
     .controller('ContentController', ContentController)
-    .controller('SubscriptionController', SubscriptionController);
+    .controller('SubscriptionController', SubscriptionController)
+    .controller('WelcomeController', WelcomeController);
 
 angular.module('feedpon.persistence', [])
-    .value(
-        'storage',
-        (typeof chrome !== 'undefined') ? chrome.storage.local : window.localStorage
-    )
+    .factory('storage', ($q: ng.IQService): IStorageBackend => {
+        if (typeof chrome !== 'undefined') {
+            return new ChromeLocalStorageBackend($q, chrome.storage.local);
+        } else {
+            return new LocalStorageBackend($q, window.localStorage);
+        }
+    })
     .service('credentialRepository', CredentialRepository);
 
-angular.module('feedpon.services', ['feedpon.cloud', 'feedpon.persistence'])
+angular.module('feedpon.services', ['feedpon.persistence'])
+    .constant('feedlyEndPoint', 'http://cloud.feedly.com')
+    .service('feedlyClientService', FeedlyClientService)
+    .service('feedlyGatewayService', FeedlyGatewayService)
     .factory(
         'windowOpener',
-        (typeof chrome !== 'undefined') ? <Function> chromeWindowOpenerFactory : <Function> cordovaWindowOpenerFactory
+         <Function> ((typeof chrome !== 'undefined') ? chromeWindowOpenerFactory : cordovaWindowOpenerFactory)
     )
     .service('authenticationService', AuthenticationService);
 
-angular.module('feedpon', ['feedpon.controllers'])
+angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
     .directive('webview', chromeWebviewDirective)
 
     /**
@@ -57,9 +60,14 @@ angular.module('feedpon', ['feedpon.controllers'])
                 url: '/',
                 templateUrl: 'templates/entrance.html'
             })
+            .state('welcome', {
+                url: '/welcome/',
+                templateUrl: 'templates/welcome.html'
+            })
             .state('content', {
-                url: '/content',
-                templateUrl: 'templates/content.html'
+                url: '/content/{streamId:.*}',
+                templateUrl: 'templates/content.html',
+                controller: 'ContentController'
             });
     })
 

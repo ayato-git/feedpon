@@ -2,20 +2,22 @@ class CredentialRepository implements ICredentialRepository {
     /**
      * @ngInject
      */
-    constructor(private storage: Storage) {
+    constructor(private storage: IStorageBackend) {
     }
 
-    get(): Credential {
-        var credential = this.storage['credential'];
-        return credential != null ? JSON.parse(credential) : null;
+    get(): ng.IPromise<Credential> {
+        return this.storage.get('credential')
+            .then((items) => {
+                return items['credential'];
+            });
     }
 
-    store(credential: Credential): void {
-        this.storage['credential'] = JSON.stringify(credential);
+    put(credential: Credential): ng.IPromise<void> {
+        return this.storage.set({'credential': credential});
     }
 
-    delete(): void {
-        delete this.storage['credential'];
+    delete(): ng.IPromise<void> {
+        return this.storage.remove('credential');
     }
 }
 

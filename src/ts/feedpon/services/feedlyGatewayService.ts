@@ -1,11 +1,12 @@
-class FeedlyGateway implements IFeedlyGateway {
-    public client: IFeedlyClient;
+class FeedlyGatewayService implements IFeedlyGatewayService {
+    public client: IFeedlyClientService;
 
     /**
      * @ngInject
      */
-    constructor(private $q: ng.IQService, feedlyClient: IFeedlyClient) {
-        this.client = feedlyClient;
+    constructor(private $q: ng.IQService,
+                feedlyClientService: IFeedlyClientService) {
+        this.client = feedlyClientService;
     }
 
     authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse> {
@@ -160,4 +161,4 @@ class FeedlyGateway implements IFeedlyGateway {
     }
 }
 
-export = FeedlyGateway;
+export = FeedlyGatewayService;

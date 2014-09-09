@@ -5,7 +5,7 @@ class UrlExpandService {
      * @ngInject
      */
     constructor(private $q: ng.IQService,
-                private urlExpander: IUrlExpander,
+                private urlExpandStrategy: IUrlExpandStrategy,
                 private longUrlRepository: ILongUrlRepository) {
     }
 
@@ -17,7 +17,7 @@ class UrlExpandService {
             return deferred.promise;
         }
 
-        return this.urlExpander
+        return this.urlExpandStrategy
             .expand(shortUrl)
             .then((longUrl) => {
                 this.longUrlRepository.store(shortUrl, longUrl);
@@ -44,7 +44,7 @@ class UrlExpandService {
             return deferred.promise;
         }
 
-        return this.urlExpander
+        return this.urlExpandStrategy
             .expandAll(unexpandedUrls)
             .then((longUrls) => {
                 for (var shortUrl in longUrls) {
