@@ -6,14 +6,11 @@ class ExpandedUrlRepository implements IExpandedUrlRepository {
     }
 
     find(url: string): ng.IPromise<string> {
-        var key = 'expandedUrl.' + url;
-        return this.storage.get(key)
-            .then((items) => items[key]);
+        return this.storage.get('expandedUrl.' + url);
     }
 
     put(url: string, expandedUrl: string): ng.IPromise<void> {
-        var key = 'expandedUrl.' + url;
-        return this.storage.set({key: expandedUrl});
+        return this.storage.set('expandedUrl.' + url, expandedUrl);
     }
 }
 

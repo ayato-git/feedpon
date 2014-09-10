@@ -7,7 +7,9 @@ class SubscritionController {
     constructor(private $scope: ISubscriptionScope,
                 private $q: ng.IQService,
                 private $ionicSideMenuDelegate: any,
+                private subscriptionRepository: ISubscriptionRepository,
                 private feedlyGatewayService: IFeedlyGatewayService) {
+        this.setUpData();
     }
 
     refresh(): void {
@@ -17,7 +19,15 @@ class SubscritionController {
                 this.feedlyGatewayService.unreadCounts()
             ])
             .then((responses) => {
-                this.handleResponses(responses[0], responses[1].unreadcounts)
+                var subscriptions: Subscription[] = responses[0];
+                var unreadCounts: UnreadCount[] = responses[1].unreadcounts;
+
+                this.handleData(subscriptions, unreadCounts);
+
+                return this.$q.all([
+                    this.subscriptionRepository.putSubscriptions(subscriptions),
+                    this.subscriptionRepository.putUnreadCounts(unreadCounts)
+                ]);
             })
             .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
     }
@@ -26,7 +36,20 @@ class SubscritionController {
         this.$ionicSideMenuDelegate.toggleLeft();
     }
 
-    private handleResponses(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
+    private setUpData(): void {
+        this.$q
+            .all([
+                this.subscriptionRepository.allSubscriptions(),
+                this.subscriptionRepository.unreadCounts()
+            ])
+            .then((responses) => {
+                if (responses[0] != null && responses[1] != null) {
+                    this.handleData(responses[0], responses[1])
+                }
+            });
+    }
+
+    private handleData(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
         this.$scope.categories = Enumerable.from(subscriptions)
             .selectMany(subscription => {
                 return Enumerable

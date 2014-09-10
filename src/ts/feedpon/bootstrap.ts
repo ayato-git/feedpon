@@ -7,6 +7,7 @@ import FeedlyClientService = require('./services/feedlyClientService');
 import FeedlyGatewayService = require('./services/feedlyGatewayService');
 import LocalStorageBackend = require('./persistence/localStorageBackend');
 import SubscriptionController = require('./controllers/subscriptionController');
+import SubscriptionRepository = require('./persistence/subscriptionRepository');
 import WelcomeController = require('./controllers/entranceController');
 import angular = require('angular');
 import chromeWebviewDirective = require('./directives/chromeWebviewDirective');
@@ -36,7 +37,8 @@ angular.module('feedpon.persistence', [])
             return new LocalStorageBackend($q, window.localStorage);
         }
     })
-    .service('credentialRepository', CredentialRepository);
+    .service('credentialRepository', CredentialRepository)
+    .service('subscriptionRepository', SubscriptionRepository);
 
 angular.module('feedpon.services', ['feedpon.persistence'])
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')

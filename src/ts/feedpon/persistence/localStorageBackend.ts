@@ -3,22 +3,24 @@ class LocalStorageBackend implements IStorageBackend {
                 private storage: Storage) {
     }
 
-    get(keys: string): ng.IPromise<{[key: string]: any}>;
-    get(keys: string[]): ng.IPromise<{[key: string]: any}>;
-    get(keys: any): ng.IPromise<{[key: string]: any}> {
+    get(key: string): ng.IPromise<any> {
+        return this.$q.when(this.storage.getItem(key));
+    }
+
+    getAll(keys: string[]): ng.IPromise<{[key: string]: any}> {
         var result: {[key: string]: any} = {};
-        if (Array.isArray(keys)) {
-            (<string[]> keys).forEach((key) => {
-                result[key] = this.storage.getItem(key);
-            });
-        } else {
-            result[keys] = this.storage.getItem(keys);
-        }
+
+        keys.forEach((key) => result[key] = this.storage.getItem(key));
 
         return this.$q.when(result);
     }
 
-    set(items: {[key: string]: any}): ng.IPromise<void> {
+    set(key: string, item: any): ng.IPromise<void> {
+        this.storage.setItem(key, JSON.stringify(item));
+        return this.$q.when();
+    }
+
+    setAll(items: {[key: string]: any}): ng.IPromise<void> {
         for (var key in items) {
             if (items.hasOwnProperty(key)) {
                 this.storage.setItem(key, JSON.stringify(items[key]));
@@ -28,17 +30,13 @@ class LocalStorageBackend implements IStorageBackend {
         return this.$q.when();
     }
 
-    remove(keys: string): ng.IPromise<void>;
-    remove(keys: string[]): ng.IPromise<void>;
-    remove(keys: any): ng.IPromise<void> {
-        if (Array.isArray(keys)) {
-            (<string[]> keys).forEach((key) => {
-                this.storage.removeItem(key);
-            });
-        } else {
-            this.storage.removeItem(keys);
-        }
+    remove(key: string): ng.IPromise<void> {
+        this.storage.removeItem(key);
+        return this.$q.when();
+    }
 
+    removeAll(keys: string[]): ng.IPromise<void> {
+        keys.forEach((key) => this.storage.removeItem(key));
         return this.$q.when();
     }
 }

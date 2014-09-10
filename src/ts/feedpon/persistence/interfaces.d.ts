@@ -19,12 +19,23 @@ interface IExpandedUrlRepository {
     put(url: string, expandedUrl: string): ng.IPromise<void>;
 }
 
-interface IStorageBackend {
-    get(key: string): ng.IPromise<{[key: string]: any}>;
-    get(keys: string[]): ng.IPromise<{[key: string]: any}>;
+interface ISubscriptionRepository {
+    allSubscriptions(): ng.IPromise<Subscription[]>;
 
-    set(items: {[key: string]: any}): ng.IPromise<void>;
+    unreadCounts(): ng.IPromise<UnreadCount[]>;
+
+    putSubscriptions(subscriptions: Subscription[]): ng.IPromise<void>;
+
+    putUnreadCounts(unreadCoutns: UnreadCount[]): ng.IPromise<void>;
+}
+
+interface IStorageBackend {
+    get(key: string): ng.IPromise<any>;
+    getAll(keys: string[]): ng.IPromise<{[key: string]: any}>;
+
+    set(key: string, item: any): ng.IPromise<void>;
+    setAll(items: {[key: string]: any}): ng.IPromise<void>;
 
     remove(key: string): ng.IPromise<void>;
-    remove(keys: string[]): ng.IPromise<void>;
+    removeAll(keys: string[]): ng.IPromise<void>;
 }

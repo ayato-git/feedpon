@@ -6,14 +6,11 @@ class CredentialRepository implements ICredentialRepository {
     }
 
     get(): ng.IPromise<Credential> {
-        return this.storage.get('credential')
-            .then((items) => {
-                return items['credential'];
-            });
+        return this.storage.get('credential');
     }
 
     put(credential: Credential): ng.IPromise<void> {
-        return this.storage.set({'credential': credential});
+        return this.storage.set('credential', credential);
     }
 
     delete(): ng.IPromise<void> {
