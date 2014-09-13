@@ -32,8 +32,10 @@ class SubscritionController {
             .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
     }
 
-    toggleLeft(): void {
-        this.$ionicSideMenuDelegate.toggleLeft();
+    toggleLeftIfRequired(): void {
+        if (!this.$scope.$exposeAside.active) {
+            this.$ionicSideMenuDelegate.toggleLeft();
+        }
     }
 
     private setUpData(): void {

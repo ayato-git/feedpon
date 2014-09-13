@@ -1,7 +1,6 @@
-ion-view(title="Feedpon" ng-controller="EntranceController as entrance" padding="true")
+ion-view(title="Feedpon" ng-controller="EntranceController as entrance")
   ion-nav-buttons(side="left")
-    button.button(ng-click="entrance.toggleLeft()")
-      i.icon.ion-navicon
+    button.button.button-icon.ion-navicon(ng-click="entrance.toggleLeft()" ng-hide="$exposeAside.active")
 
-  ion-content
+  ion-content.padding
     h2 Welcome

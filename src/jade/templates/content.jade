@@ -1,7 +1,6 @@
 ion-view(title="Feedpon" ng-controller="ContentController as content")
   ion-nav-buttons(side="left")
-    button.button(ng-click="content.toggleLeft()")
-      i.icon.ion-navicon
+    button.button.button-icon.ion-navicon(ng-click="content.toggleLeft()" ng-hide="$exposeAside.active")
 
   ion-content
     ul.list

@@ -11,7 +11,14 @@ gulp.task('bower', function(done) {
   });
 });
 
-gulp.task('copy', ['copy:fonts']);
+gulp.task('copy', ['copy:css', 'copy:fonts']);
+
+gulp.task('copy:css', ['bower'], function() {
+  return gulp.src([
+      'bower_components/angular/angular-csp.css',
+    ])
+    .pipe(gulp.dest('build/www/css'));
+});
 
 gulp.task('copy:fonts', ['bower'], function() {
   return gulp.src([
