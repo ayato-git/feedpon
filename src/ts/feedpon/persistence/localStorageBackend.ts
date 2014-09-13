@@ -4,13 +4,13 @@ class LocalStorageBackend implements IStorageBackend {
     }
 
     get(key: string): ng.IPromise<any> {
-        return this.$q.when(this.storage.getItem(key));
+        return this.$q.when(JSON.parse(this.storage.getItem(key)));
     }
 
     getAll(keys: string[]): ng.IPromise<{[key: string]: any}> {
         var result: {[key: string]: any} = {};
 
-        keys.forEach((key) => result[key] = this.storage.getItem(key));
+        keys.forEach((key) => result[key] = JSON.parse(this.storage.getItem(key)));
 
         return this.$q.when(result);
     }
