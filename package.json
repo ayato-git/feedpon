@@ -38,11 +38,30 @@
     "linqjs": "./bower_components/linqjs/linq.js"
   },
   "browserify-shim": {
-    "angular": {"exports": "angular"},
-    "angular-aimate": {"depends": ["angular"]},
-    "angular-sanitize": {"depends": ["angular"]},
-    "angular-ui-router": {"depends": ["angular"]},
-    "ionic-angular": {"depends": ["angular", "ionic"]}
+    "angular": {
+      "exports": "angular"
+    },
+    "angular-aimate": {
+      "depends": [
+        "angular"
+      ]
+    },
+    "angular-sanitize": {
+      "depends": [
+        "angular"
+      ]
+    },
+    "angular-ui-router": {
+      "depends": [
+        "angular"
+      ]
+    },
+    "ionic-angular": {
+      "depends": [
+        "angular",
+        "ionic"
+      ]
+    }
   },
   "browserify": {
     "transform": [

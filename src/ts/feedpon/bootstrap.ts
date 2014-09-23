@@ -10,9 +10,10 @@ import SubscriptionController = require('./controllers/subscriptionController');
 import SubscriptionRepository = require('./persistence/subscriptionRepository');
 import WelcomeController = require('./controllers/entranceController');
 import angular = require('angular');
-import chromeWebviewDirective = require('./directives/chromeWebviewDirective');
+import chromeWebview = require('./directives/chromeWebview');
 import chromeWindowOpenerFactory = require('./factories/chromeWindowOpenerFactory');
 import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
+import cspSrc = require('./directives/cspSrc');
 
 require('angular-animate');
 require('angular-sanitize');
@@ -51,7 +52,8 @@ angular.module('feedpon.services', ['feedpon.persistence'])
     .service('authenticationService', AuthenticationService);
 
 angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
-    .directive('webview', chromeWebviewDirective)
+    .directive('webview', chromeWebview)
+    .directive('cspSrc', cspSrc)
 
     /**
      * @ngInject
@@ -85,6 +87,10 @@ angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
      */
     .config(($sceProvider: ng.ISCEProvider) => {
         $sceProvider.enabled(false);
+    })
+    .config(($compileProvider: ng.ICompileProvider) => {
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|chrome-extension):|data:image\//);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|chrome-extension):/);
     });
 
 if ('cordova' in window) {
