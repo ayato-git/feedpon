@@ -3,12 +3,14 @@ import ChromeLocalStorageBackend = require('./persistence/chromeLocalStorageBack
 import ContentController = require('./controllers/contentController');
 import CredentialRepository = require('./persistence/credentialRepository');
 import EntranceController = require('./controllers/entranceController');
-import FeedlyClientService = require('./services/feedlyClientService');
-import FeedlyGatewayService = require('./services/feedlyGatewayService');
+import FeedlyAuthenticator = require('./services/feedlyAuthenticator');
+import FeedlyGateway = require('./services/feedlyGateway');
+import HttpClient = require('./services/httpClient');
+import HttpClientOnWorker = require('./services/httpClientOnWorker');
 import LocalStorageBackend = require('./persistence/localStorageBackend');
 import SubscriptionController = require('./controllers/subscriptionController');
 import SubscriptionRepository = require('./persistence/subscriptionRepository');
-import WelcomeController = require('./controllers/entranceController');
+import WelcomeController = require('./controllers/welcomeController');
 import angular = require('angular');
 import chromeWebview = require('./directives/chromeWebview');
 import chromeWindowOpenerFactory = require('./factories/chromeWindowOpenerFactory');
@@ -43,11 +45,15 @@ angular.module('feedpon.persistence', [])
 
 angular.module('feedpon.services', ['feedpon.persistence'])
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')
-    .service('feedlyClientService', FeedlyClientService)
-    .service('feedlyGatewayService', FeedlyGatewayService)
+    .service(
+        'httpClient',
+        (typeof chrome !== 'undefined') ? <Function> HttpClientOnWorker : HttpClient
+    )
+    .service('feedlyAuthenticator', FeedlyAuthenticator)
+    .service('feedlyGateway', FeedlyGateway)
     .factory(
         'windowOpener',
-         <Function> ((typeof chrome !== 'undefined') ? chromeWindowOpenerFactory : cordovaWindowOpenerFactory)
+         (typeof chrome !== 'undefined') ? <Function> chromeWindowOpenerFactory : cordovaWindowOpenerFactory
     )
     .service('authenticationService', AuthenticationService);
 
@@ -69,9 +75,8 @@ angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
                 templateUrl: 'templates/welcome.html'
             })
             .state('content', {
-                url: '/content/{streamId:.*}',
-                templateUrl: 'templates/content.html',
-                controller: 'ContentController'
+                url: '/content/{streamId:.+}',
+                templateUrl: 'templates/content.html'
             });
     })
 

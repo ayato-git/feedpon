@@ -6,15 +6,14 @@ class EntranceController {
      */
     constructor(private $scope: ng.IScope,
                 private $state: ng.ui.IStateService,
-                private authenticationService: AuthenticationService,
-                private windowOpener: IWindowOpener) {
-        authenticationService.isAuthorized().then((authorized) => {
+                private authenticationService: IAuthenticationService) {
+        authenticationService.isAuthorized(Date.now()).then((authorized) => {
             if (authorized) $state.go('welcome');
         });
     }
 
     authenticate(): void {
-        this.authenticationService.authenticate(this.windowOpener, Date.now())
+        this.authenticationService.authenticate(Date.now())
             .finally(() => this.$state.go('welcome'));
     }
 }

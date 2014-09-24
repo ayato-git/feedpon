@@ -5,7 +5,7 @@ import PromiseQueueService = require('../services/PromiseQueueService');
  * @ngInject
  */
 function provideCspSrc($http: ng.IHttpService): ng.IDirective {
-    var queue = new PromiseQueueService(3);
+    var queue = new PromiseQueueService(4);
 
     function loadImage(uri: string): ng.IPromise<string> {
         return $http
@@ -20,7 +20,7 @@ function provideCspSrc($http: ng.IHttpService): ng.IDirective {
         link: function postLink(scope, element, attrs) {
             var uri: string = attrs['cspSrc'];
             if (<boolean> (<any> angular).$$csp()) {
-                queue.add(() => {
+                queue.enqueue(() => {
                     return loadImage(uri).then((blobUri) => {
                         element.attr('src', blobUri);
                     });

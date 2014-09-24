@@ -11,7 +11,7 @@ gulp.task('bower', function(done) {
   });
 });
 
-gulp.task('copy', ['copy:css', 'copy:fonts']);
+gulp.task('copy', ['copy:css', 'copy:fonts', 'copy:js']);
 
 gulp.task('copy:css', ['bower'], function() {
   return gulp.src([
@@ -25,6 +25,11 @@ gulp.task('copy:fonts', ['bower'], function() {
       'bower_components/ionic/fonts/*',
     ])
     .pipe(gulp.dest('build/www/fonts'));
+});
+
+gulp.task('copy:js', ['typescript'], function() {
+  return gulp.src(['build/modules/feedpon/workers/*'])
+    .pipe(gulp.dest('build/www/js'));
 });
 
 gulp.task('jade', function() {
@@ -81,7 +86,7 @@ gulp.task('watch', function() {
 
   gulp.watch('src/jade/**/*.jade', ['jade']);
   gulp.watch('src/scss/**/*.scss', ['sass']);
-  gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['browserify']);
+  gulp.watch(['src/ts/**/*.ts', 'src/templates/**/*'], ['browserify', 'copy:js']);
 });
 
 gulp.task('symlink', ['copy', 'jade', 'sass', 'browserify'], function() {

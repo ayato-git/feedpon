@@ -1,19 +1,22 @@
-interface IFeedlyClientService {
-    credential: ExchangeTokenResponse;
+interface IHttpClient {
     endPoint: string;
-    request<T>(method: string, path: string, data?: any): ng.IPromise<T>;
+    request<T>(method: string, path: string, data?: any, headers?: any): ng.IPromise<ng.IHttpPromiseCallbackArg<T>>;
 }
 
-interface IFeedlyGatewayService extends IAuthenticationApi,
-                                        ICategoriesApi,
-                                        IFeedsApi,
-                                        IMarkersApi,
-                                        IStreamsApi,
-                                        ISubscriptionsApi {
-    client: IFeedlyClientService;
+interface IAuthenticationService {
+    authenticate(now: number): ng.IPromise<Credential>;
+    expire(): ng.IPromise<void>;
+    isAuthorized(now: number): ng.IPromise<boolean>;
 }
 
-interface IAuthenticationApi {
+interface IFeedlyGateway extends ICategoriesApi,
+                                 IFeedsApi,
+                                 IMarkersApi,
+                                 IStreamsApi,
+                                 ISubscriptionsApi {
+}
+
+interface IFeedlyAuthenticator {
     authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse>;
 
     exchangeToken(input: ExchangeTokenInput): ng.IPromise<ExchangeTokenResponse>;

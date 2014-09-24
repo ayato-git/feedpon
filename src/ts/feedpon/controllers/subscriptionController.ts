@@ -8,15 +8,15 @@ class SubscritionController {
                 private $q: ng.IQService,
                 private $ionicSideMenuDelegate: any,
                 private subscriptionRepository: ISubscriptionRepository,
-                private feedlyGatewayService: IFeedlyGatewayService) {
+                private feedlyGateway: IFeedlyGateway) {
         this.setUpData();
     }
 
     refresh(): void {
         this.$q
             .all([
-                this.feedlyGatewayService.allSubscriptions(),
-                this.feedlyGatewayService.unreadCounts()
+                this.feedlyGateway.allSubscriptions(),
+                this.feedlyGateway.unreadCounts()
             ])
             .then((responses) => {
                 var subscriptions: Subscription[] = responses[0];

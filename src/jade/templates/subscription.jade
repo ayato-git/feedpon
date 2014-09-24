@@ -11,7 +11,7 @@ div(ng-controller="SubscriptionController as subscription" side="left")
         ul
           li(ng-repeat="item in items | filter:{category: category}")
             a.item.item-icon-right(ui-sref="content({streamId: item.subscription.id})" ng-click="subscription.toggleLeftIfRequired()")
-              img(alt="favicon" width="16" height="16" csp-src="https://www.google.com/s2/favicons?domain_url={{item.subscription.website}}&alt=feed")
+              // img(alt="favicon" width="16" height="16" csp-src="https://www.google.com/s2/favicons?domain_url={{item.subscription.website}}&alt=feed")
               | &nbsp;{{item.subscription.title}}
               span.badge.badge-assertive(ng-if="item.unreadCount.count > 0") {{item.unreadCount.count}}
 

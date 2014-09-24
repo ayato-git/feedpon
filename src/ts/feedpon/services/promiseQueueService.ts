@@ -6,7 +6,7 @@ class PromiseQueueService {
     constructor(private maxWorkers: number) {
     }
 
-    add(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void {
+    enqueue(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void {
         this.tasks.push(() => task.apply(null, args));
         this.process();
     }

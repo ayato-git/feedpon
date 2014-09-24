@@ -6,7 +6,7 @@ class ContentController {
                 private $ionicLoading: any,
                 private $ionicSideMenuDelegate: any,
                 private $stateParams: ng.ui.IStateParamsService,
-                private feedlyGatewayService: IFeedlyGatewayService) {
+                private feedlyGateway: IFeedlyGateway) {
         if ($stateParams['streamId']) {
             this.fetchContents($stateParams['streamId']);
         }
@@ -21,7 +21,7 @@ class ContentController {
             template: 'Loading...'
         });
 
-        this.feedlyGatewayService.getContents({streamId: streamId})
+        this.feedlyGateway.getContents({streamId: streamId})
             .then((contents) => {
                 this.$scope.contents = contents;
             })
