@@ -1,4 +1,4 @@
-class PromiseQueueService {
+class PromiseQueue {
     private tasks: Array<() => ng.IPromise<any>> = [];
 
     private runningWorkers: number = 0;
@@ -31,4 +31,4 @@ class PromiseQueueService {
     }
 }
 
-export = PromiseQueueService;
+export = PromiseQueue;

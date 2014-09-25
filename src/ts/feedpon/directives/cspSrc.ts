@@ -1,11 +1,11 @@
 import angular = require('angular');
-import PromiseQueueService = require('../services/PromiseQueueService');
+import PromiseQueue = require('../services/PromiseQueue');
 
 /**
  * @ngInject
  */
 function provideCspSrc($http: ng.IHttpService): ng.IDirective {
-    var queue = new PromiseQueueService(4);
+    var queue = new PromiseQueue(4);
 
     function loadImage(uri: string): ng.IPromise<string> {
         return $http
