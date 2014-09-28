@@ -103,6 +103,25 @@ angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
 
 if ('cordova' in window) {
     document.addEventListener('deviceready', bootstrap, false);
+
+    // Open the link by InAppBrowser
+    document.addEventListener('click', (e) => {
+        var target = <Element> e.target;
+
+        do {
+            if (target.nodeName === 'A' &&
+                target.getAttribute('target') === '_blank') {
+                e.preventDefault();
+
+                var uri = target.getAttribute('href');
+
+                window.open(uri, '_blank', 'location=no');
+
+                break;
+            }
+        } while ((target = <Element> target.parentNode) &&
+                  target.nodeType !== target.DOCUMENT_NODE);
+    }, false);
 } else {
     bootstrap();
 }

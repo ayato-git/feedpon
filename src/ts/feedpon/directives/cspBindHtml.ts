@@ -34,8 +34,8 @@ function provideCspBindHtml($sce: ng.ISCEService,
             .css('height', toPixel(element.attr('height'), 'auto'));
     }
 
-    function replaceSrcAttribute(node: Element) {
-        var element = angular.element(node);
+    function replaceSrcAttribute(target: Element) {
+        var element = angular.element(target);
         var uri = element.attr('src');
         if (uri == null) return;
 
