@@ -240,3 +240,7 @@ interface IUrlExpandStrategy {
 
     expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}>;
 }
+
+interface IPromiseQueue {
+    enqueue(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void;
+}

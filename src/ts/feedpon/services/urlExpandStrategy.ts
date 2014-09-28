@@ -18,9 +18,9 @@ class UrlExpandStrategy implements IUrlExpandStrategy {
 
     expandAll(urls: string[]): ng.IPromise<{[key: string]: string}> {
         return this.$http({
-            data: JSON.stringify(urls),
             method: 'POST',
-            url: UrlExpandStrategy.API_URL
+            url: UrlExpandStrategy.API_URL,
+            data: urls
         });
     }
 }

@@ -25,12 +25,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     markAsReadForEntries(entryIds: any): ng.IPromise<void> {
         if (Array.isArray(entryIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'markAsRead',
                 type: 'entries',
                 entryIds: entryIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.markAsReadForEntries([entryIds])
         }
@@ -38,12 +37,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     markAsReadForFeeds(feedIds: any): ng.IPromise<void> {
         if (Array.isArray(feedIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'markAsRead',
                 type: 'feeds',
                 feedIds: feedIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.markAsReadForFeeds([feedIds])
         }
@@ -51,12 +49,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     markAsReadForCetegories(categoryIds: any): ng.IPromise<void> {
         if (Array.isArray(categoryIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'markAsRead',
                 type: 'categories',
                 categoryIds: categoryIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.markAsReadForCetegories([categoryIds])
         }
@@ -64,12 +61,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     keepUnreadForEntries(entryIds: any): ng.IPromise<void> {
         if (Array.isArray(entryIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'keepUnread',
                 type: 'entries',
                 entryIds: entryIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.keepUnreadForEntries([entryIds])
         }
@@ -77,12 +73,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     keepUnreadForFeeds(feedIds: any): ng.IPromise<void> {
         if (Array.isArray(feedIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'keepUnread',
                 type: 'feeds',
                 feedIds: feedIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.keepUnreadForFeeds([feedIds])
         }
@@ -90,12 +85,11 @@ class FeedlyGateway implements IFeedlyGateway {
 
     keepUnreadForCetegories(categoryIds: any): ng.IPromise<void> {
         if (Array.isArray(categoryIds)) {
-            var input = JSON.stringify({
+            return this.request<void>('GET', '/v3/markers', {
                 action: 'keepUnread',
                 type: 'categories',
                 categoryIds: categoryIds
             });
-            return this.request<void>('GET', '/v3/markers', input);
         } else {
             return this.keepUnreadForCetegories([categoryIds])
         }

@@ -7,7 +7,7 @@ class HttpClientOnWorker implements IHttpClient {
 
     private tasks: {[key: string]: ng.IDeferred<any>} = {};
 
-    private sequences: number = 0;
+    private sequence: number = 0;
 
     /**
      * @ngInject
@@ -20,7 +20,7 @@ class HttpClientOnWorker implements IHttpClient {
     }
 
     request<T>(method: string, path: string, data?: any, headers?: any): ng.IPromise<ng.IHttpPromiseCallbackArg<T>> {
-        var id = this.sequences++;
+        var id = this.sequence++;
         var deferred = this.tasks[id] = this.$q.defer();
         var config: ng.IRequestConfig = {
             headers: angular.extend({'content-type': 'application/json'}, headers),

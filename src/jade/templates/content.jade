@@ -7,4 +7,4 @@ ion-view(title="Feedpon" ng-controller="ContentController as content")
       li.item(ng-repeat="item in contents.items")
         .item-body
           h2 {{item.title}}
-          div(ng-bind-html="item.content.content")
+          div(csp-bind-html="item.content.content")

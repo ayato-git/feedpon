@@ -57,9 +57,11 @@
             });
         };
 
-        xhr.send(
-            data == null || typeof data === 'string' ? data : serializeData(data)
-        );
+        if (typeof data === 'object') {
+            data = JSON.stringify(data);
+        }
+
+        xhr.send(data);
     };
 
     function serializeData(data: any): string { 

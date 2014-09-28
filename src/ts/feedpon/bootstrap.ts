@@ -8,6 +8,7 @@ import FeedlyGateway = require('./services/feedlyGateway');
 import HttpClient = require('./services/httpClient');
 import HttpClientOnWorker = require('./services/httpClientOnWorker');
 import LocalStorageBackend = require('./persistence/localStorageBackend');
+import PromiseQueue = require('./services/promiseQueue');
 import SubscriptionController = require('./controllers/subscriptionController');
 import SubscriptionRepository = require('./persistence/subscriptionRepository');
 import WelcomeController = require('./controllers/welcomeController');
@@ -15,6 +16,7 @@ import angular = require('angular');
 import chromeWebview = require('./directives/chromeWebview');
 import chromeWindowOpenerFactory = require('./factories/chromeWindowOpenerFactory');
 import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
+import cspBindHtml = require('./directives/cspBindHtml');
 import cspSrc = require('./directives/cspSrc');
 
 require('angular-animate');
@@ -58,8 +60,13 @@ angular.module('feedpon.services', ['feedpon.persistence'])
     .service('authenticationService', AuthenticationService);
 
 angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
+    .factory('cspPromiseQueue', () => {
+        return new PromiseQueue(4);
+    })
+
     .directive('webview', chromeWebview)
     .directive('cspSrc', cspSrc)
+    .directive('cspBindHtml', cspBindHtml)
 
     /**
      * @ngInject
@@ -92,10 +99,6 @@ angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
      */
     .config(($sceProvider: ng.ISCEProvider) => {
         $sceProvider.enabled(false);
-    })
-    .config(($compileProvider: ng.ICompileProvider) => {
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|chrome-extension):|data:image\//);
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|chrome-extension):/);
     });
 
 if ('cordova' in window) {

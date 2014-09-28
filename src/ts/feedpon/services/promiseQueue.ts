@@ -1,4 +1,4 @@
-class PromiseQueue {
+class PromiseQueue implements IPromiseQueue {
     private tasks: Array<() => ng.IPromise<any>> = [];
 
     private runningWorkers: number = 0;
