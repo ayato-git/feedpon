@@ -23,12 +23,8 @@ function provideCspBindHtml($sce: ng.ISCEService,
         return value ? value + 'px' : def;
     }
 
-    function replaceSrcAttribute(node: Element) {
-        var element = angular.element(node);
-        var uri = element.attr('src');
-        if (uri == null) return;
-
-        var placeholder = angular.element(
+    function createPlaceholder(element: JQuery): JQuery {
+        return angular.element(
             '<div class="csp-loading">' +
                 '<div class="csp-loading-inner">' +
                     '<i class="csp-loading-icon icon ion-loading-c"></i>' +
@@ -36,19 +32,20 @@ function provideCspBindHtml($sce: ng.ISCEService,
             '</div>')
             .css('width', toPixel(element.attr('width'), 'auto'))
             .css('height', toPixel(element.attr('height'), 'auto'));
+    }
 
+    function replaceSrcAttribute(node: Element) {
+        var element = angular.element(node);
+        var uri = element.attr('src');
+        if (uri == null) return;
+
+        var placeholder = createPlaceholder(element);
         element.removeAttr('src').replaceWith(placeholder);
 
         cspPromiseQueue.enqueue(() => {
             return loadImage(uri)
-                .then(
-                    (blobUri) => {
-                        placeholder.replaceWith(element.attr('src', blobUri))
-                    },
-                    () => {
-                        placeholder.replaceWith(element)
-                    }
-                );
+                .then((blobUri) => { element.attr('src', blobUri) })
+                .finally(() => { placeholder.replaceWith(element) })
         });
     }
 
