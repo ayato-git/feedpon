@@ -49,12 +49,16 @@ function provideCspBindHtml($sce: ng.ISCEService,
         });
     }
 
-    function withExternalResource(html: string): JQuery {
+    function compileHtml(html: string): JQuery {
         var parser = new DOMParser();
         var parsed = parser.parseFromString(html, 'text/html');
         var element = angular.element(parsed.body);
 
-        angular.forEach(element.find('img'), replaceSrcAttribute);
+        element.find('a').attr('target', '_blank');
+
+        if (cspIsEnabled()) {
+            angular.forEach(element.find('img'), replaceSrcAttribute);
+        }
 
         return element.children();
     }
@@ -76,11 +80,7 @@ function provideCspBindHtml($sce: ng.ISCEService,
 
                     scope.$watch(getStringValue, (value) => {
                         var html = ($sce.getTrustedHtml(parsed(scope)) || '');
-                        if (cspIsEnabled()) {
-                            element.append(withExternalResource(html));
-                        } else {
-                            element.html(html);
-                        }
+                        element.append(compileHtml(html));
                     });
                 }
             };
