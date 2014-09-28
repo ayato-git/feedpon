@@ -122,17 +122,12 @@
 {
     return [super webView:theWebView didFailLoadWithError:error];
 }
-*/
 
 - (BOOL) webView:(UIWebView*)theWebView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    NSURL* url = [request URL];
-    if ([[url scheme] isEqualToString:@"about"]) {
-        return YES;
-    } else {
-        return [super webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
-    }
+    return [super webView:theWebView shouldStartLoadWithRequest:request navigationType:navigationType];
 }
+*/
 
 @end
 
@@ -149,17 +144,7 @@
     return [super getCommandInstance:className];
 }
 
-/*
-   NOTE: this will only inspect execute calls coming explicitly from native plugins,
-   not the commandQueue (from JavaScript). To see execute calls from JavaScript, see
-   MainCommandQueue below
-*/
-- (BOOL)execute:(CDVInvokedUrlCommand*)command
-{
-    return [super execute:command];
-}
-
-- (NSString*)pathForResource:(NSString*)resourcepath;
+- (NSString*)pathForResource:(NSString*)resourcepath
 {
     return [super pathForResource:resourcepath];
 }

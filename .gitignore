@@ -2,8 +2,16 @@
 .gulp-tsc-tmp-*
 /app/chrome/www
 /app/cordova/node_modules
+/app/cordova/platforms/*/www
+/app/cordova/platforms/ios/cordova/console.log
 /app/cordova/www
 /bower_components
 /build
 /gulp-tsc-tmp-*
 /node_modules
+npm-debug.log
+
+*.xcodeproj/
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata
+xcuserdata/
