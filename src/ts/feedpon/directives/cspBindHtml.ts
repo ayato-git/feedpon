@@ -49,9 +49,24 @@ function provideCspBindHtml($sce: ng.ISCEService,
         });
     }
 
-    function compileHtml(html: string): JQuery {
+    function parseHtml(html: string): HTMLDocument {
         var parser = new DOMParser();
-        var parsed = parser.parseFromString(html, 'text/html');
+        try {
+            var parsed = parser.parseFromString(html, 'text/html');
+        } catch (e) {
+            // Firefox/Opera/IE throw errors on unsupported types
+        }
+
+        if (parsed == null) {
+            parsed = document.implementation.createHTMLDocument('');
+            parsed.body.innerHTML = html;
+        }
+
+        return parsed;
+    }
+
+    function compileHtml(html: string): JQuery {
+        var parsed = parseHtml(html);
         var element = angular.element(parsed.body);
 
         element.find('a').attr('target', '_blank');
