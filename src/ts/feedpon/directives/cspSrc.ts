@@ -3,7 +3,7 @@ import angular = require('angular');
 /**
  * @ngInject
  */
-function provideCspSrc($http: ng.IHttpService, cspPromiseQueue: IPromiseQueue): ng.IDirective {
+function provideCspSrc($http: ng.IHttpService, promiseQueue: IPromiseQueue): ng.IDirective {
     function loadImage(uri: string): ng.IPromise<string> {
         return $http
             .get(uri, {responseType: 'blob'})
@@ -21,7 +21,7 @@ function provideCspSrc($http: ng.IHttpService, cspPromiseQueue: IPromiseQueue): 
         link: function postLink(scope, element, attrs) {
             var uri: string = attrs['cspSrc'];
             if (cspIsEnabled()) {
-                cspPromiseQueue.enqueue(() => {
+                promiseQueue.enqueue(() => {
                     return loadImage(uri).then((blobUri) => {
                         element.attr('src', blobUri);
                     });

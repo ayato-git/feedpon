@@ -6,7 +6,7 @@ import angular = require('angular');
 function provideCspBindHtml($sce: ng.ISCEService,
                             $http: ng.IHttpService,
                             $parse: ng.IParseService,
-                            cspPromiseQueue: IPromiseQueue): ng.IDirective {
+                            promiseQueue: IPromiseQueue): ng.IDirective {
     function loadImage(uri: string): ng.IPromise<string> {
         return $http
             .get(uri, {responseType: 'blob'})
@@ -42,7 +42,7 @@ function provideCspBindHtml($sce: ng.ISCEService,
         var placeholder = createPlaceholder(element);
         element.removeAttr('src').replaceWith(placeholder);
 
-        cspPromiseQueue.enqueue(() => {
+        promiseQueue.enqueue(() => {
             return loadImage(uri)
                 .then((blobUri) => { element.attr('src', blobUri) })
                 .finally(() => { placeholder.replaceWith(element) })

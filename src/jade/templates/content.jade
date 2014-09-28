@@ -5,6 +5,14 @@ ion-view(title="Feedpon" ng-controller="ContentController as content")
   ion-content
     ul.list
       li.item(ng-repeat="item in contents.items")
-        .item-body
-          h2 {{item.title}}
+        article.item-body
+          h2
+            a(href="{{item.alternate[0].href}}" target="_blank") {{item.title}}
+
           div(csp-bind-html="item.content.content")
+
+          footer.padding-vertical
+            a.button.icon-left.ion-bookmark(href="http://b.hatena.ne.jp/entry/{{item.alternate[0].href}}" target="_blank")
+              hatena-bookmark(src="item.alternate[0].href")
+
+            time {{item.published | date:'yyyy-MM-dd HH:mm:ss Z'}}

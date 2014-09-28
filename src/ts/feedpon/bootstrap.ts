@@ -18,6 +18,7 @@ import chromeWindowOpenerFactory = require('./factories/chromeWindowOpenerFactor
 import cordovaWindowOpenerFactory = require('./factories/cordovaWindowOpenerFactory');
 import cspBindHtml = require('./directives/cspBindHtml');
 import cspSrc = require('./directives/cspSrc');
+import hatenaBookmark = require('./directives/hatenaBookmark');
 
 require('angular-animate');
 require('angular-sanitize');
@@ -60,13 +61,14 @@ angular.module('feedpon.services', ['feedpon.persistence'])
     .service('authenticationService', AuthenticationService);
 
 angular.module('feedpon', ['feedpon.controllers', 'ui.router'])
-    .factory('cspPromiseQueue', () => {
+    .factory('promiseQueue', () => {
         return new PromiseQueue(4);
     })
 
     .directive('webview', chromeWebview)
     .directive('cspSrc', cspSrc)
     .directive('cspBindHtml', cspBindHtml)
+    .directive('hatenaBookmark', hatenaBookmark)
 
     /**
      * @ngInject
