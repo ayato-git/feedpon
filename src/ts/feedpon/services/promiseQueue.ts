@@ -13,8 +13,8 @@ class PromiseQueue implements IPromiseQueue {
 
     private process(): void {
         if (this.runningWorkers < this.maxWorkers) {
-            var remaining = this.maxWorkers - this.runningWorkers;
-            var l = Math.min(remaining, this.tasks.length);
+            var capacity = this.maxWorkers - this.runningWorkers;
+            var l = Math.min(capacity, this.tasks.length);
             for (var i = 0; i < l; i++) {
                 this.run(this.tasks.shift());
             }

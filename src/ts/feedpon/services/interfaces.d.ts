@@ -4,9 +4,9 @@ interface IHttpClient {
 }
 
 interface IAuthenticationService {
-    authenticate(now: number): ng.IPromise<Credential>;
+    authenticate(): ng.IPromise<Credential>;
     expire(): ng.IPromise<void>;
-    isAuthorized(now: number): ng.IPromise<boolean>;
+    isAuthorized(): ng.IPromise<boolean>;
 }
 
 interface IFeedlyGateway extends ICategoriesApi,
@@ -243,4 +243,8 @@ interface IUrlExpandStrategy {
 
 interface IPromiseQueue {
     enqueue(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void;
+}
+
+interface ITimeProvider {
+    (): number;
 }

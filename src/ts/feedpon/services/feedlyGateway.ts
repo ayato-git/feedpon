@@ -109,7 +109,7 @@ class FeedlyGateway implements IFeedlyGateway {
 
     private request<T>(method: string, path: string, data?: any): ng.IPromise<T> {
         return this.authenticationService
-            .authenticate(Date.now())
+            .authenticate()
             .then((credential) => {
                 return this.httpClient.request<T>(method, path, data, {
                     Authorization: 'OAuth ' + credential.access_token

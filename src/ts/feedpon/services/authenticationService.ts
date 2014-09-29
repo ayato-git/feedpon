@@ -7,18 +7,19 @@ class AuthenticationService implements IAuthenticationService {
     constructor(private $q: ng.IQService,
                 private credentialRepository: ICredentialRepository,
                 private feedlyAuthenticator: IFeedlyAuthenticator,
+                private timeProvider: ITimeProvider,
                 private windowOpener: IWindowOpener) {
     }
 
-    authenticate(now: number): ng.IPromise<Credential> {
+    authenticate(): ng.IPromise<Credential> {
         return this.credentialRepository.get()
             .then((credential) => {
                 if (credential == null) {
                     // Not authenticated yet.
-                    return this.doAuthenticate(now);
-                } else if (isTokenExpired(credential, now)) {
+                    return this.doAuthenticate();
+                } else if (this.isTokenExpired(credential)) {
                     // Require token refreshing.
-                    return this.doRefreshToken(credential, now);
+                    return this.doRefreshToken(credential);
                 } else {
                     var deferred = this.$q.defer();
                     deferred.resolve(credential);
@@ -31,14 +32,14 @@ class AuthenticationService implements IAuthenticationService {
         return this.credentialRepository.delete();
     }
 
-    isAuthorized(now: number): ng.IPromise<boolean> {
+    isAuthorized(): ng.IPromise<boolean> {
         return this.credentialRepository.get()
             .then((credential) => {
                 if (credential == null) {
                     return false;
                 }
 
-                if (isTokenExpired(credential, now)) {
+                if (this.isTokenExpired(credential)) {
                     return false;
                 }
 
@@ -46,7 +47,7 @@ class AuthenticationService implements IAuthenticationService {
             });
     }
 
-    private doAuthenticate(now: number): ng.IPromise<Credential> {
+    private doAuthenticate(): ng.IPromise<Credential> {
         return this.feedlyAuthenticator
             .authenticate({
                 client_id: 'feedly',
@@ -65,13 +66,13 @@ class AuthenticationService implements IAuthenticationService {
             })
             .then((response) => {
                 var credential: Credential = <Credential> angular.copy(response);
-                credential.created = now;
+                credential.created = this.timeProvider();
 
                 return this.credentialRepository.put(credential).then(() => credential);
             });
     }
 
-    private doRefreshToken(credential: Credential, now: number): ng.IPromise<Credential> {
+    private doRefreshToken(credential: Credential): ng.IPromise<Credential> {
         return this.feedlyAuthenticator.refreshToken({
                 refresh_token: credential.refresh_token,
                 client_id: 'feedly',
@@ -80,16 +81,17 @@ class AuthenticationService implements IAuthenticationService {
             })
             .then((response) => {
                 var newCredential: Credential = angular.extend({}, credential, response);
-                newCredential.created = now;
+                newCredential.created = this.timeProvider();
 
                 return this.credentialRepository.put(newCredential)
                     .then<Credential>(() => newCredential);
             });
     }
-}
 
-function isTokenExpired(credential: Credential, now: number): boolean {
-    return credential.created + (credential.expires_in * 1000) < now;
+    private isTokenExpired(credential: Credential): boolean {
+        return credential.created + (credential.expires_in * 1000) <
+            this.timeProvider();
+    }
 }
 
 export = AuthenticationService;

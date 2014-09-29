@@ -47,6 +47,7 @@ angular.module('feedpon.persistence', [])
     .service('subscriptionRepository', SubscriptionRepository);
 
 angular.module('feedpon.services', ['feedpon.persistence'])
+    .constant('timeProvider', Date.now)
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')
     .service(
         'httpClient',
