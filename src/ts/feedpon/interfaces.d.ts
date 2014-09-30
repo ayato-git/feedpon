@@ -10,4 +10,28 @@ declare module "angular" {
     export = angular;
 }
 
+declare module ionic {
+    var Platform: IPlatform;
+
+    interface IPlatform {
+        ready(callback: Function): void;
+        setGrade(grade: string): void;
+        device(): Object;
+        isWebView(): boolean;
+        isIPad(): boolean;
+        isIOS(): boolean;
+        isAndroid(): boolean;
+        isWindowsPhone(): boolean;
+        platform(): string;
+        version(): string;
+        exitApp(): void;
+        showStatusBar(shouldShow: boolean): void;
+        fullScreen(showFullScreen?: boolean, showStatusBar?: boolean): void;
+        isReady: boolean;
+        isFullScreen: boolean;
+        platforms: string[];
+        grade: string;
+    }
+}
+
 declare var require: (file: string) => void;

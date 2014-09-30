@@ -7,6 +7,13 @@ $font-family-sans-serif:          "Helvetica Neue", Helvetica, Arial, "Lucida Gr
 
 @import "../../bower_components/ionic/scss/ionic.scss";
 
+html,
+body,
+.ionic-body,
+.scroll {
+  @include user-select(text);
+}
+
 .item {
   .badge {
     right: $item-padding;

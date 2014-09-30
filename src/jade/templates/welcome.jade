@@ -2,5 +2,5 @@ ion-view(title="Feedpon" ng-controller="WelcomeController as welcome")
   ion-nav-buttons(side="left")
     button.button.button-icon.ion-navicon(ng-click="welcome.toggleLeft()" ng-hide="$exposeAside.active")
 
-  ion-content.padding
+  ion-content.padding(overflow-scroll="true")
     h2 Welcome

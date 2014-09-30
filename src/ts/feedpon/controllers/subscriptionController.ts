@@ -7,12 +7,13 @@ class SubscritionController {
     constructor(private $scope: ISubscriptionScope,
                 private $q: ng.IQService,
                 private $ionicSideMenuDelegate: any,
+                private $state: ng.ui.IStateService,
                 private subscriptionRepository: ISubscriptionRepository,
                 private feedlyGateway: IFeedlyGateway) {
         this.setUpData();
     }
 
-    refresh(): void {
+    reload(): void {
         this.$q
             .all([
                 this.feedlyGateway.allSubscriptions(),
@@ -32,10 +33,12 @@ class SubscritionController {
             .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
     }
 
-    toggleLeftIfRequired(): void {
-        if (!this.$scope.$exposeAside.active) {
-            this.$ionicSideMenuDelegate.toggleLeft();
+    selected(subscription: Subscription): void {
+        if (!(this.$scope.$exposeAside || {}).active) {
+            this.$ionicSideMenuDelegate.toggleLeft(false);
         }
+
+        this.$state.go('content', {streamId: subscription.id});
     }
 
     private setUpData(): void {
@@ -48,7 +51,8 @@ class SubscritionController {
                 if (responses[0] != null && responses[1] != null) {
                     this.handleData(responses[0], responses[1])
                 }
-            });
+            })
+            .catch((responses) => this.reload());
     }
 
     private handleData(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
