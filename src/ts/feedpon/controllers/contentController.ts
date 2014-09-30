@@ -3,8 +3,8 @@ class ContentController {
      * @ngInject
      */
     constructor(private $scope: IContentScope,
-                private $ionicLoading: any,
-                private $ionicSideMenuDelegate: any,
+                private $ionicLoading: ionic.ILoading,
+                private $ionicSideMenuDelegate: ionic.ISideMenuDelegate,
                 private $stateParams: ng.ui.IStateParamsService,
                 private feedlyGateway: IFeedlyGateway) {
         if ($stateParams['streamId']) {

@@ -32,6 +32,30 @@ declare module ionic {
         platforms: string[];
         grade: string;
     }
+
+    interface ISideMenuDelegate {
+        toggleLeft(isOpen?: boolean): void;
+        toggleRight(isOpen?: boolean): void;
+        getOpenRatio(): number;
+        isOpen(): boolean;
+        isOpenLeft(): boolean;
+        isOpenRight(): boolean;
+        canDragContent(canDrag?: boolean): boolean;
+        edgeDragThreshold(value: boolean): boolean;
+        edgeDragThreshold(value: number): boolean;
+        $getByHandle(handle: string): ISideMenuDelegate;
+    }
+
+    interface ILoading {
+        show(opts: {
+            template?: string;
+            templateUrl?: string;
+            noBackdrop?: boolean;
+            delay?: number;
+            duration?: number;
+        }): void;
+        hide(): void;
+    }
 }
 
 declare var require: (file: string) => void;

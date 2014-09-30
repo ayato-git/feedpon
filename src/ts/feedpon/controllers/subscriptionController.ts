@@ -6,7 +6,7 @@ class SubscritionController {
      */
     constructor(private $scope: ISubscriptionScope,
                 private $q: ng.IQService,
-                private $ionicSideMenuDelegate: any,
+                private $ionicSideMenuDelegate: ionic.ISideMenuDelegate,
                 private $state: ng.ui.IStateService,
                 private subscriptionRepository: ISubscriptionRepository,
                 private feedlyGateway: IFeedlyGateway) {
