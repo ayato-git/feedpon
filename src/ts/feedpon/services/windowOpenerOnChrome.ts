@@ -1,8 +1,8 @@
 /**
  * @ngInject
  */
-function chromeWindowOpenerFactory($q: ng.IQService,
-                                   $ionicModal: any): IWindowOpener {
+function windowOpenerOnChrome($q: ng.IQService,
+                              $ionicModal: any): IWindowOpener {
     var template =
         '<ion-modal-view>' +
           '<webview ng-src="{{url}}" on-loadredirect="onLoadredirect($event)">' +
@@ -31,4 +31,4 @@ function chromeWindowOpenerFactory($q: ng.IQService,
     }
 }
 
-export = chromeWindowOpenerFactory;
+export = windowOpenerOnChrome;

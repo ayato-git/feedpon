@@ -1,8 +1,3 @@
-interface IHttpClient {
-    endPoint: string;
-    request<T>(method: string, path: string, data?: any, headers?: any): ng.IPromise<ng.IHttpPromiseCallbackArg<T>>;
-}
-
 interface IAuthenticationService {
     authenticate(): ng.IPromise<Credential>;
     expire(): ng.IPromise<void>;
@@ -233,6 +228,14 @@ interface Subscription {
     velocity: number;
     topics: string[];
     visualUrl: string;
+}
+
+interface IHtmlParser {
+    (html: string): HTMLDocument;
+}
+
+interface IHttpClient {
+    request<T>(config: ng.IRequestConfig): ng.IPromise<ng.IHttpPromiseCallbackArg<T>>;
 }
 
 interface IUrlExpandStrategy {

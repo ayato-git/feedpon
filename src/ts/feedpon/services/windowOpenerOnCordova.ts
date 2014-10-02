@@ -1,7 +1,7 @@
 /**
  * @ngInject
  */
-function cordovaWindowOpenerFactory($q: ng.IQService, $window: ng.IWindowService): IWindowOpener {
+function WindowOpenerOnCordova($q: ng.IQService, $window: ng.IWindowService): IWindowOpener {
     return function(url: string, expectUrl: string): ng.IPromise<string> {
         var authWindow = $window.open(url, '_blank', 'location=no,toolbar=no');
         var deferred = $q.defer();
@@ -22,4 +22,4 @@ function cordovaWindowOpenerFactory($q: ng.IQService, $window: ng.IWindowService
     }
 }
 
-export = cordovaWindowOpenerFactory;
+export = WindowOpenerOnCordova;

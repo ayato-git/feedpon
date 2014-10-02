@@ -1,8 +1,6 @@
 import angular = require('angular');
 
 class HttpClientOnWorker implements IHttpClient {
-    public endPoint: string;
-
     private worker: Worker;
 
     private tasks: {[key: string]: ng.IDeferred<any>} = {};
@@ -12,30 +10,18 @@ class HttpClientOnWorker implements IHttpClient {
     /**
      * @ngInject
      */
-    constructor(private $q: ng.IQService,
-                feedlyEndPoint: string) {
-        this.endPoint = feedlyEndPoint;
+    constructor(private $q: ng.IQService) {
         this.worker = new Worker('js/xhr-worker.js');
         this.worker.onmessage = this.onMessage.bind(this);
     }
 
-    request<T>(method: string, path: string, data?: any, headers?: any): ng.IPromise<ng.IHttpPromiseCallbackArg<T>> {
+    request<T>(config: ng.IRequestConfig): ng.IPromise<ng.IHttpPromiseCallbackArg<T>> {
         var id = this.sequence++;
         var deferred = this.tasks[id] = this.$q.defer();
-        var config: ng.IRequestConfig = {
-            headers: angular.extend({'content-type': 'application/json'}, headers),
-            method: method,
-            responseType: 'json',
-            url: this.endPoint + path
-        };
 
-        if (data) {
-            if (method === 'GET') {
-                config.params = data;
-            } else {
-                config.data = angular.isObject(data) ? angular.toJson(data) : data;
-            }
-        }
+        config.headers = angular.extend({
+            'content-type': 'application/json'
+        }, config.headers || {});
 
         this.worker.postMessage({
             id: id,

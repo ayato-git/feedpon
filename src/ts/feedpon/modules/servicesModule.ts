@@ -5,9 +5,10 @@ import HttpClient = require('../services/httpClient');
 import HttpClientOnWorker = require('../services/httpClientOnWorker');
 import PromiseQueue = require('../services/promiseQueue');
 import angular = require('angular');
-import chromeWindowOpenerFactory = require('../factories/chromeWindowOpenerFactory');
-import cordovaWindowOpenerFactory = require('../factories/cordovaWindowOpenerFactory');
+import htmlParser = require('../services/htmlParser');
 import persistenceModule = require('./persistenceModule');
+import windowOpenerOnChrome = require('../services/windowOpenerOnChrome');
+import windowOpenerOnCordova = require('../services/windowOpenerOnCordova');
 
 var m = angular.module('feedpon.services', [persistenceModule.name])
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')
@@ -18,12 +19,13 @@ var m = angular.module('feedpon.services', [persistenceModule.name])
     .factory(
         'windowOpener',
          (typeof chrome !== 'undefined')
-            ? <Function> chromeWindowOpenerFactory
-            : <Function> cordovaWindowOpenerFactory
+            ? <Function> windowOpenerOnChrome
+            : <Function> windowOpenerOnCordova
     )
     .service('authenticationService', AuthenticationService)
     .service('feedlyAuthenticator', FeedlyAuthenticator)
     .service('feedlyGateway', FeedlyGateway)
+    .service('htmlParser', htmlParser)
     .service(
         'httpClient',
         (typeof chrome !== 'undefined')
