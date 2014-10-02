@@ -18,7 +18,7 @@ class ContentController {
 
     fetchContents(streamId: string): void {
         this.$ionicLoading.show({
-            template: 'Loading...'
+            template: 'Loading contents...'
         });
 
         this.feedlyGateway.getContents({streamId: streamId})

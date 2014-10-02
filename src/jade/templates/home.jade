@@ -1,0 +1,6 @@
+ion-view(title="Home" ng-controller="HomeController as home")
+  ion-nav-buttons(side="left")
+    button.button.button-icon.ion-navicon(ng-click="home.toggleLeft()" ng-hide="$exposeAside.active")
+
+  ion-content.padding
+    h2 Welcome

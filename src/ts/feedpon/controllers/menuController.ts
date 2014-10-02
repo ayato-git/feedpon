@@ -1,19 +1,27 @@
 import Enumerable = require('linqjs');
 
-class SubscritionController {
+class MenuController {
     /**
      * @ngInject
      */
-    constructor(private $scope: ISubscriptionScope,
-                private $q: ng.IQService,
+    constructor(private $ionicLoading: ionic.ILoading,
                 private $ionicSideMenuDelegate: ionic.ISideMenuDelegate,
+                private $q: ng.IQService,
+                private $scope: ISubscriptionScope,
                 private $state: ng.ui.IStateService,
-                private subscriptionRepository: ISubscriptionRepository,
-                private feedlyGateway: IFeedlyGateway) {
-        this.setUpData();
+                private feedlyGateway: IFeedlyGateway,
+                private subscriptionRepository: ISubscriptionRepository) {
+        this.initData();
+    }
+
+    add(): void {
     }
 
     reload(): void {
+        this.$ionicLoading.show({
+            template: 'Loading subscriptions...'
+        });
+
         this.$q
             .all([
                 this.feedlyGateway.allSubscriptions(),
@@ -23,14 +31,17 @@ class SubscritionController {
                 var subscriptions: Subscription[] = responses[0];
                 var unreadCounts: UnreadCount[] = responses[1].unreadcounts;
 
-                this.handleData(subscriptions, unreadCounts);
+                this.loadCompleted(subscriptions, unreadCounts);
 
                 return this.$q.all([
                     this.subscriptionRepository.putSubscriptions(subscriptions),
                     this.subscriptionRepository.putUnreadCounts(unreadCounts)
                 ]);
             })
-            .finally(() => this.$scope.$broadcast('scroll.refreshComplete'));
+            .finally(() => {
+                this.$ionicLoading.hide()
+                this.$scope.$broadcast('scroll.refreshComplete')
+            });
     }
 
     selected(subscription: Subscription): void {
@@ -41,7 +52,7 @@ class SubscritionController {
         this.$state.go('content', {streamId: subscription.id});
     }
 
-    private setUpData(): void {
+    private initData(): void {
         this.$q
             .all([
                 this.subscriptionRepository.allSubscriptions(),
@@ -49,13 +60,13 @@ class SubscritionController {
             ])
             .then((responses) => {
                 if (responses[0] != null && responses[1] != null) {
-                    this.handleData(responses[0], responses[1])
+                    this.loadCompleted(responses[0], responses[1])
                 }
             })
             .catch((responses) => this.reload());
     }
 
-    private handleData(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
+    private loadCompleted(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
         this.$scope.categories = Enumerable.from(subscriptions)
             .selectMany(subscription => {
                 return Enumerable
@@ -92,4 +103,4 @@ class SubscritionController {
     }
 }
 
-export = SubscritionController;
+export = MenuController;

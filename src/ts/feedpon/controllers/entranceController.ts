@@ -8,13 +8,13 @@ class EntranceController {
                 private $state: ng.ui.IStateService,
                 private authenticationService: IAuthenticationService) {
         authenticationService.isAuthorized().then((authorized) => {
-            if (authorized) $state.go('welcome');
+            if (authorized) this.$state.go('home');
         });
     }
 
     authenticate(): void {
         this.authenticationService.authenticate()
-            .finally(() => this.$state.go('welcome'));
+            .finally(() => this.$state.go('home'));
     }
 }
 

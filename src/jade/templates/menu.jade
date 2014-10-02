@@ -1,0 +1,25 @@
+div(ng-controller="MenuController as menu" side="left")
+  ion-header-bar
+    .buttons
+      button.button.button-icon.ion-ios7-gear-outline
+    h1.title
+    .buttons
+      button.button.button-icon.ion-ios7-refresh-empty(ng-click="menu.reload()")
+
+  ion-content
+    .item-input-inset
+      label.item-input-wrapper
+        i.icon.ion-ios7-search.placeholder-icon
+        input(type="search")
+
+    ion-refresher(pulling-text="Pull to refresh..." on-refresh="menu.reload()")
+
+    ul.list
+      li(ng-repeat="category in categories")
+        .item.item-divider {{category.label}}
+
+        ul
+          li(ng-repeat="item in items | filter:{category: category}")
+            a.item.item-icon-right(ng-click="menu.selected(item.subscription)")
+              | &nbsp;{{item.subscription.title}}
+              span.badge.badge-assertive(ng-if="item.unreadCount.count > 0") {{item.unreadCount.count}}

@@ -1,4 +1,4 @@
-class WelcomeController {
+class HomeController {
     /**
      * @ngInject
      */
@@ -11,4 +11,4 @@ class WelcomeController {
     }
 }
 
-export = WelcomeController;
+export = HomeController;

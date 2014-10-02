@@ -1,8 +1,11 @@
-ion-view(title="Feedpon" ng-controller="ContentController as content")
+ion-view(title="{{contents.title}}" ng-controller="ContentController as content")
   ion-nav-buttons(side="left")
     button.button.button-icon.ion-navicon(ng-click="content.toggleLeft()" ng-hide="$exposeAside.active")
 
-  ion-content(overflow-scroll="true")
+  ion-nav-buttons(side="right")
+    button.button.button-icon.ion-ios7-more
+
+  ion-content
     ul.list
       li.item(ng-repeat="item in contents.items")
         article.item-body
