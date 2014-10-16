@@ -1,4 +1,7 @@
 class LocalStorageBackend implements IStorageBackend {
+    /**
+     * @ngInject
+     */
     constructor(private $q: ng.IQService,
                 private storage: Storage) {
     }

@@ -6,6 +6,48 @@
 /// <reference path="../../DefinitelyTyped/chrome/chrome-app.d.ts" />
 /// <reference path="../../DefinitelyTyped/cordova/cordova.d.ts" />
 
+interface Document {
+    evaluate(xpathExpression: string,
+             contextNode?: Node,
+             namespaceResolver?: Function,
+             resultType?: number,
+             result?: XPathResult): XPathResult;
+}
+
+interface XPathResult {
+    ANY_TYPE: number;
+    ANY_UNORDERED_NODE_TYPE: number;
+    BOOLEAN_TYPE: number;
+    FIRST_ORDERED_NODE_TYPE: number;
+    NUMBER_TYPE: number;
+    RDERED_NODE_ITERATOR_TYPE: number;
+    ORDERED_NODE_SNAPSHOT_TYPE: number;
+    STRING_TYPE: number;
+    UNORDERED_NODE_ITERATOR_TYPE: number;
+    UNORDERED_NODE_SNAPSHOT_TYPE: number;
+    booleanValue: boolean;
+    invalidIteratorState: boolean;
+    numberValue: number;
+    resultType: number;
+    singleNodeValue: Node;
+    snapshotLength: number;
+    iterateNext(): Node;
+    snapshotItem(itemNumber: number): Node;
+}
+
+declare var XPathResult: {
+    ANY_TYPE: number;
+    ANY_UNORDERED_NODE_TYPE: number;
+    BOOLEAN_TYPE: number;
+    FIRST_ORDERED_NODE_TYPE: number;
+    NUMBER_TYPE: number;
+    RDERED_NODE_ITERATOR_TYPE: number;
+    ORDERED_NODE_SNAPSHOT_TYPE: number;
+    STRING_TYPE: number;
+    UNORDERED_NODE_ITERATOR_TYPE: number;
+    UNORDERED_NODE_SNAPSHOT_TYPE: number;
+};
+
 declare module "angular" {
     export = angular;
 }

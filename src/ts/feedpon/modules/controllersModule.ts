@@ -14,6 +14,6 @@ var m = angular.module('feedpon.controllers', [
     .controller('ContentController', ContentController)
     .controller('EntranceController', EntranceController)
     .controller('MenuController', MenuController)
-    .controller('homeController', HomeController);
+    .controller('HomeController', HomeController);
 
 export = m;

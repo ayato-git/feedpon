@@ -1,11 +1,12 @@
 import AuthenticationService = require('../services/authenticationService');
 import FeedlyAuthenticator = require('../services/feedlyAuthenticator');
 import FeedlyGateway = require('../services/feedlyGateway');
+import FullContentLoader = require('../services/fullContentLoader');
 import HttpClient = require('../services/httpClient');
 import HttpClientOnWorker = require('../services/httpClientOnWorker');
 import PromiseQueue = require('../services/promiseQueue');
+import WedataLoader = require('../services/wedataLoader');
 import angular = require('angular');
-import htmlParser = require('../services/htmlParser');
 import persistenceModule = require('./persistenceModule');
 import windowOpenerOnChrome = require('../services/windowOpenerOnChrome');
 import windowOpenerOnCordova = require('../services/windowOpenerOnCordova');
@@ -25,12 +26,9 @@ var m = angular.module('feedpon.services', [persistenceModule.name])
     .service('authenticationService', AuthenticationService)
     .service('feedlyAuthenticator', FeedlyAuthenticator)
     .service('feedlyGateway', FeedlyGateway)
-    .service('htmlParser', htmlParser)
-    .service(
-        'httpClient',
-        (typeof chrome !== 'undefined')
-            ? <Function> HttpClientOnWorker
-            : <Function> HttpClient
-    );
+    .service('fullContentLoader', FullContentLoader)
+    .service('httpClient',
+             (typeof chrome !== 'undefined') ?  <Function> HttpClientOnWorker : <Function> HttpClient)
+    .service('wedataLoader', WedataLoader);
 
 export = m;

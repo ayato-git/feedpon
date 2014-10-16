@@ -5,7 +5,7 @@ class ExpandedUrlRepository implements IExpandedUrlRepository {
     constructor(private storage: IStorageBackend) {
     }
 
-    find(url: string): ng.IPromise<string> {
+    get(url: string): ng.IPromise<string> {
         return this.storage.get('expandedUrl.' + url);
     }
 

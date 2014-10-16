@@ -12,9 +12,14 @@ ion-view(title="{{contents.title}}" ng-controller="ContentController as content"
           h2
             a(href="{{item.alternate[0].href}}" target="_blank") {{item.title}}
 
+          p
+            a(href="{{item.alternate[0].href}}" target="_blank") {{item.alternate[0].href}}
+
           div(csp-bind-html="item.content.content")
 
           footer.padding-vertical
+            button.button(ng-click="content.extractFullContent(item)") Full Content
+
             a.button.icon-left.ion-bookmark(href="http://b.hatena.ne.jp/entry/{{item.alternate[0].href}}" target="_blank")
               hatena-bookmark(src="item.alternate[0].href")
 

@@ -1,4 +1,5 @@
 import angular = require('angular');
+import htmlParser = require('../utils/htmlParser');
 
 /**
  * @ngInject
@@ -7,9 +8,9 @@ function provideCspBindHtml($sce: ng.ISCEService,
                             $http: ng.IHttpService,
                             $parse: ng.IParseService,
                             promiseQueue: IPromiseQueue): ng.IDirective {
-    function loadImage(uri: string): ng.IPromise<string> {
+    function loadImage(url: string): ng.IPromise<string> {
         return $http
-            .get(uri, {responseType: 'blob'})
+            .get(url, {responseType: 'blob'})
             .then((response) => {
                 return URL.createObjectURL(response.data);
             });
@@ -34,48 +35,33 @@ function provideCspBindHtml($sce: ng.ISCEService,
             .css('height', toPixel(element.attr('height'), 'auto'));
     }
 
-    function replaceSrcAttribute(target: Element) {
+    function loadSrcAttribute(target: Element) {
         var element = angular.element(target);
-        var uri = element.attr('src');
-        if (uri == null) return;
+        var url = element.attr('src');
+        if (url == null) return;
 
         var placeholder = createPlaceholder(element);
         element.removeAttr('src').replaceWith(placeholder);
 
         promiseQueue.enqueue(() => {
-            return loadImage(uri)
-                .then((blobUri) => { element.attr('src', blobUri) })
+            return loadImage(url)
+                .then((blobUrl) => { element.attr('src', blobUrl) })
                 .finally(() => { placeholder.replaceWith(element) })
         });
     }
 
-    function parseHtml(html: string): HTMLDocument {
-        var parser = new DOMParser();
-        try {
-            var parsed = parser.parseFromString(html, 'text/html');
-        } catch (e) {
-            // Firefox/Opera/IE throw errors on unsupported types
-        }
-
-        if (parsed == null) {
-            parsed = document.implementation.createHTMLDocument('');
-            parsed.body.innerHTML = html;
-        }
-
-        return parsed;
-    }
-
     function compileHtml(html: string): JQuery {
-        var parsed = parseHtml(html);
-        var element = angular.element(parsed.body);
+        var parsed = htmlParser(html);
+        var body = angular.element(parsed.body);
 
-        element.find('a').attr('target', '_blank');
+        // Open external links in a new tab.
+        body.find('a').attr('target', '_blank');
 
         if (cspIsEnabled()) {
-            angular.forEach(element.find('img'), replaceSrcAttribute);
+            angular.forEach(body.find('img'), loadSrcAttribute);
         }
 
-        return element.children();
+        return body.children();
     }
 
     return {
@@ -94,8 +80,9 @@ function provideCspBindHtml($sce: ng.ISCEService,
                     }
 
                     scope.$watch(getStringValue, (value) => {
-                        var html = ($sce.getTrustedHtml(parsed(scope)) || '');
-                        element.append(compileHtml(html));
+                        var originalHtml = parsed(scope);
+                        var trustedHtml = $sce.getTrustedHtml(originalHtml) || '';
+                        element.empty().append(compileHtml(trustedHtml));
                     });
                 }
             };

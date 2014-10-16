@@ -21,7 +21,7 @@ function windowOpenerOnChrome($q: ng.IQService,
                 modal.remove();
             }
         };
-        scope.$on('$destroy', function() {
+        scope.$on('$destroy', function onDestroy() {
             deferred.reject();
         });
 

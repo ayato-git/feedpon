@@ -10,7 +10,7 @@ class UrlExpandService {
     }
 
     expand(url: string): ng.IPromise<string> {
-        var expandedUrl = this.expanedUrlRepository.find(url);
+        var expandedUrl = this.expanedUrlRepository.get(url);
         if (expandedUrl != null) {
             return this.$q.when(expandedUrl);
         }
@@ -27,7 +27,7 @@ class UrlExpandService {
         var processingUrls: string[] = [];
 
         var tasks = urls.map((url) => {
-            return this.expanedUrlRepository.find(url).then((expandedUrl) => {
+            return this.expanedUrlRepository.get(url).then((expandedUrl) => {
                 if (expandedUrl != null) {
                     results[url] = expandedUrl;
                 } else {

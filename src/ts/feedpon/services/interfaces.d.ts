@@ -4,13 +4,6 @@ interface IAuthenticationService {
     isAuthorized(): ng.IPromise<boolean>;
 }
 
-interface IFeedlyGateway extends ICategoriesApi,
-                                 IFeedsApi,
-                                 IMarkersApi,
-                                 IStreamsApi,
-                                 ISubscriptionsApi {
-}
-
 interface IFeedlyAuthenticator {
     authenticate(input: AuthenticateInput, windowOpener: IWindowOpener): ng.IPromise<AuthenticateResponse>;
 
@@ -21,8 +14,11 @@ interface IFeedlyAuthenticator {
     revokeToken(input: RevokeTokenInput): ng.IPromise<RevokeTokenResponse>;
 }
 
-interface IWindowOpener {
-    (url: string, redirectUrl: string): ng.IPromise<string>;
+interface IFeedlyGateway extends ICategoriesApi,
+                                 IFeedsApi,
+                                 IMarkersApi,
+                                 IStreamsApi,
+                                 ISubscriptionsApi {
 }
 
 interface AuthenticateInput {
@@ -55,6 +51,13 @@ interface ExchangeTokenResponse {
     token_type: string;
     plan: string;
     state?: string;
+}
+
+interface Credential extends ExchangeTokenResponse {
+    /**
+     * Unix time when this credential was created.
+     */
+    created: number;
 }
 
 interface RefreshTokenInput {
@@ -230,12 +233,32 @@ interface Subscription {
     visualUrl: string;
 }
 
-interface IHtmlParser {
-    (html: string): HTMLDocument;
+interface IFullContentLoader {
+    initSiteinfo(): ng.IPromise<Siteinfo>;
+
+    reloadSiteinfo(): ng.IPromise<Siteinfo>;
+
+    load(url: string): ng.IPromise<HTMLElement>;
+}
+
+interface Siteinfo {
+    autoPagerize: WedataItem<AutoPagerizeItem>[];
+    ldrFullFeed: WedataItem<LDRFullFeedItem>[]
 }
 
 interface IHttpClient {
     request<T>(config: ng.IRequestConfig): ng.IPromise<ng.IHttpPromiseCallbackArg<T>>;
+}
+
+interface IPromiseQueue {
+    enqueue(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void;
+}
+
+interface ITimeProvider {
+    /**
+     * Provide current time.
+     */
+    (): number;
 }
 
 interface IUrlExpandStrategy {
@@ -244,10 +267,39 @@ interface IUrlExpandStrategy {
     expandAll(shortUrls: string[]): ng.IPromise<{[key: string]: string}>;
 }
 
-interface IPromiseQueue {
-    enqueue(task: (...args: any[]) => ng.IPromise<any>, ...args: any[]): void;
+interface IWedataLoader {
+    getItems<T>(database: string): ng.IPromise<WedataItem<T>[]>;
+
+    reloadItems<T>(database: string): ng.IPromise<WedataItem<T>[]>;
 }
 
-interface ITimeProvider {
-    (): number;
+interface WedataItem<T> {
+    resource_url: string;
+    database_resource_url: string;
+    data: T;
+    created_by: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface AutoPagerizeItem {
+    url: string;
+    nextLink: string;
+    pageElement: string;
+    exampleUrl?: string;
+    insertBefore?: string;
+}
+
+interface LDRFullFeedItem {
+    url: string;
+    xpath: string;
+    type: string;
+    enc?: string;
+    microformats?: string;
+    base?: string;
+}
+
+interface IWindowOpener {
+    (url: string, redirectUrl: string): ng.IPromise<string>;
 }

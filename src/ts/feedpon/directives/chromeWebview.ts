@@ -23,12 +23,20 @@ function provideChromeWebviewDirective(): ng.IDirective {
         restrict: 'E',
         scope: events,
         link: function postLink(scope, element, attrs) {
+            var callbacks: {[key: string]: Function} = {};
+
             Object.keys(events).forEach(name => {
                 if (events[name].slice(1) in attrs) {
-                    element.on(name, (event) => {
+                    var callback = callbacks[name] = (event: JQueryEventObject) => {
                         scope.$apply(() => scope[name]({$event: event}));
-                    });
+                    };
+
+                    element.on(name, callback);
                 }
+            });
+
+            scope.$on('$destroy', function onDestroy() {
+                element.off(callbacks);
             });
         }
     };

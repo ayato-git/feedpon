@@ -6,15 +6,8 @@ interface ICredentialRepository {
     delete(): ng.IPromise<void>;
 }
 
-interface Credential extends ExchangeTokenResponse {
-    /**
-     * Unix time when this credential was created.
-     */
-    created: number;
-}
-
 interface IExpandedUrlRepository {
-    find(url: string): ng.IPromise<string>;
+    get(url: string): ng.IPromise<string>;
 
     put(url: string, expandedUrl: string): ng.IPromise<void>;
 }
@@ -38,4 +31,10 @@ interface IStorageBackend {
 
     remove(key: string): ng.IPromise<void>;
     removeAll(keys: string[]): ng.IPromise<void>;
+}
+
+interface IWedataRepository {
+    get<T>(database: string): ng.IPromise<WedataItem<T>[]>;
+
+    put<T>(database: string, items: WedataItem<T>[]): ng.IPromise<void>;
 }

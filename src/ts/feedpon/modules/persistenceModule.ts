@@ -2,6 +2,7 @@ import ChromeLocalStorageBackend = require('../persistence/chromeLocalStorageBac
 import CredentialRepository = require('../persistence/credentialRepository');
 import LocalStorageBackend = require('../persistence/localStorageBackend');
 import SubscriptionRepository = require('../persistence/subscriptionRepository');
+import WedataRepository = require('../persistence/wedataRepository');
 import angular = require('angular');
 
 var m = angular.module('feedpon.persistence', [])
@@ -13,6 +14,7 @@ var m = angular.module('feedpon.persistence', [])
         }
     })
     .service('credentialRepository', CredentialRepository)
-    .service('subscriptionRepository', SubscriptionRepository);
+    .service('subscriptionRepository', SubscriptionRepository)
+    .service('wedataRepository', WedataRepository);
 
 export = m;

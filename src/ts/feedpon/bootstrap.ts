@@ -31,13 +31,6 @@ angular.module('feedpon', [
      */
     .config(($urlRouterProvider: ng.ui.IUrlRouterProvider) => {
         $urlRouterProvider.otherwise('/');
-    })
-
-    /**
-     * @ngInject
-     */
-    .config(($sceProvider: ng.ISCEProvider) => {
-        $sceProvider.enabled(false);
     });
 
 if ('cordova' in window) {
@@ -52,9 +45,9 @@ if ('cordova' in window) {
                 target.getAttribute('target') === '_blank') {
                 e.preventDefault();
 
-                var uri = target.getAttribute('href');
+                var url = target.getAttribute('href');
 
-                window.open(uri, '_blank', 'location=no');
+                window.open(url, '_blank', 'location=no');
 
                 break;
             }

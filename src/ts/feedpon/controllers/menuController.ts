@@ -7,17 +7,19 @@ class MenuController {
     constructor(private $ionicLoading: ionic.ILoading,
                 private $ionicSideMenuDelegate: ionic.ISideMenuDelegate,
                 private $q: ng.IQService,
-                private $scope: ISubscriptionScope,
+                private $scope: IMenuScope,
                 private $state: ng.ui.IStateService,
                 private feedlyGateway: IFeedlyGateway,
+                private fullContentLoader: IFullContentLoader,
                 private subscriptionRepository: ISubscriptionRepository) {
-        this.initData();
+        this.initSiteinfo();
+        this.initSubscriptions();
     }
 
-    add(): void {
+    newSubscription(): void {
     }
 
-    reload(): void {
+    reloadSubscriptions(): void {
         this.$ionicLoading.show({
             template: 'Loading subscriptions...'
         });
@@ -44,7 +46,7 @@ class MenuController {
             });
     }
 
-    selected(subscription: Subscription): void {
+    selectSubscription(subscription: Subscription): void {
         if (!(this.$scope.$exposeAside || {}).active) {
             this.$ionicSideMenuDelegate.toggleLeft(false);
         }
@@ -52,8 +54,30 @@ class MenuController {
         this.$state.go('content', {streamId: subscription.id});
     }
 
-    private initData(): void {
-        this.$q
+    reloadSiteinfo(): void {
+        this.$ionicLoading.show({
+            template: 'Loading siteinfo...'
+        });
+
+        this.fullContentLoader.reloadSiteinfo()
+            .finally(() => {
+                this.$ionicLoading.hide();
+            });
+    }
+
+    private initSiteinfo(): void {
+        this.$ionicLoading.show({
+            template: 'Loading siteinfo...'
+        });
+
+        this.fullContentLoader.initSiteinfo()
+            .finally(() => {
+                this.$ionicLoading.hide()
+            });
+    }
+
+    private initSubscriptions(): ng.IPromise<void> {
+        return this.$q
             .all([
                 this.subscriptionRepository.allSubscriptions(),
                 this.subscriptionRepository.unreadCounts()
@@ -62,8 +86,7 @@ class MenuController {
                 if (responses[0] != null && responses[1] != null) {
                     this.loadCompleted(responses[0], responses[1])
                 }
-            })
-            .catch((responses) => this.reload());
+            });
     }
 
     private loadCompleted(subscriptions: Subscription[], unreadCounts: UnreadCount[]): void {
