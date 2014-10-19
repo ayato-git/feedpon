@@ -7,11 +7,11 @@ import HttpClientOnWorker = require('../services/httpClientOnWorker');
 import PromiseQueue = require('../services/promiseQueue');
 import WedataLoader = require('../services/wedataLoader');
 import angular = require('angular');
-import persistenceModule = require('./persistenceModule');
+import storesModule = require('./storesModule');
 import windowOpenerOnChrome = require('../services/windowOpenerOnChrome');
 import windowOpenerOnCordova = require('../services/windowOpenerOnCordova');
 
-var m = angular.module('feedpon.services', [persistenceModule.name])
+var m = angular.module('feedpon.services', [storesModule.name])
     .constant('feedlyEndPoint', 'http://cloud.feedly.com')
     .constant('timeProvider', Date.now)
     .factory('promiseQueue', () => {

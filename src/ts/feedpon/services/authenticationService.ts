@@ -5,14 +5,14 @@ class AuthenticationService implements IAuthenticationService {
      * @ngInject
      */
     constructor(private $q: ng.IQService,
-                private credentialRepository: ICredentialRepository,
+                private credentialStore: ICredentialStore,
                 private feedlyAuthenticator: IFeedlyAuthenticator,
                 private timeProvider: ITimeProvider,
                 private windowOpener: IWindowOpener) {
     }
 
     authenticate(): ng.IPromise<Credential> {
-        return this.credentialRepository.get()
+        return this.credentialStore.get()
             .then((credential) => {
                 if (credential == null) {
                     // Not authenticated yet.
@@ -29,11 +29,11 @@ class AuthenticationService implements IAuthenticationService {
     }
 
     expire(): ng.IPromise<void> {
-        return this.credentialRepository.delete();
+        return this.credentialStore.delete();
     }
 
     isAuthorized(): ng.IPromise<boolean> {
-        return this.credentialRepository.get()
+        return this.credentialStore.get()
             .then((credential) => {
                 if (credential == null) {
                     return false;
@@ -68,7 +68,7 @@ class AuthenticationService implements IAuthenticationService {
                 var credential: Credential = <Credential> angular.copy(response);
                 credential.created = this.timeProvider();
 
-                return this.credentialRepository.put(credential).then(() => credential);
+                return this.credentialStore.put(credential).then(() => credential);
             });
     }
 
@@ -83,7 +83,7 @@ class AuthenticationService implements IAuthenticationService {
                 var newCredential: Credential = angular.extend({}, credential, response);
                 newCredential.created = this.timeProvider();
 
-                return this.credentialRepository.put(newCredential)
+                return this.credentialStore.put(newCredential)
                     .then<Credential>(() => newCredential);
             });
     }

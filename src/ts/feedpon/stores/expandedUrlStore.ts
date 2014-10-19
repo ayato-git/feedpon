@@ -1,4 +1,4 @@
-class ExpandedUrlRepository implements IExpandedUrlRepository {
+class ExpandedUrlStore implements IExpandedUrlStore {
     /**
      * @ngInject
      */
@@ -14,4 +14,4 @@ class ExpandedUrlRepository implements IExpandedUrlRepository {
     }
 }
 
-export = ExpandedUrlRepository;
+export = ExpandedUrlStore;

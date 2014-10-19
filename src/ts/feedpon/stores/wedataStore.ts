@@ -1,4 +1,4 @@
-class WedataRepository implements IWedataRepository {
+class WedataStore implements IWedataStore {
     /**
      * @ngInject
      */
@@ -14,4 +14,4 @@ class WedataRepository implements IWedataRepository {
     }
 }
 
-export = WedataRepository;
+export = WedataStore;

@@ -19,7 +19,7 @@ class MenuController {
                 private $state: ng.ui.IStateService,
                 private feedlyGateway: IFeedlyGateway,
                 private fullContentLoader: IFullContentLoader,
-                private subscriptionRepository: ISubscriptionRepository) {
+                private subscriptionStore: ISubscriptionStore) {
         this.initSiteinfo();
         this.initSubscriptions();
     }
@@ -44,8 +44,8 @@ class MenuController {
                 this.loadCompleted(subscriptions, unreadCounts);
 
                 return this.$q.all([
-                    this.subscriptionRepository.putSubscriptions(subscriptions),
-                    this.subscriptionRepository.putUnreadCounts(unreadCounts)
+                    this.subscriptionStore.putSubscriptions(subscriptions),
+                    this.subscriptionStore.putUnreadCounts(unreadCounts)
                 ]);
             })
             .finally(() => {
@@ -87,8 +87,8 @@ class MenuController {
     private initSubscriptions(): ng.IPromise<void> {
         return this.$q
             .all([
-                this.subscriptionRepository.allSubscriptions(),
-                this.subscriptionRepository.unreadCounts()
+                this.subscriptionStore.allSubscriptions(),
+                this.subscriptionStore.unreadCounts()
             ])
             .then((responses) => {
                 if (responses[0] != null && responses[1] != null) {

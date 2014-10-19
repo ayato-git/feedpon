@@ -1,10 +1,10 @@
 class WedataLoader implements IWedataLoader {
     constructor(private httpClient: IHttpClient,
-                private wedataRepository: IWedataRepository) {
+                private wedataStore: IWedataStore) {
     }
 
     getItems<T>(database: string): ng.IPromise<WedataItem<T>[]> {
-        return this.wedataRepository.get<T>(database)
+        return this.wedataStore.get<T>(database)
             .catch(() => this.reloadItems(database));
     }
 
@@ -13,7 +13,7 @@ class WedataLoader implements IWedataLoader {
             method: 'GET',
             url: 'http://wedata.net/databases/' + database + '/items_all.json'
         }).then((response) => {
-            return this.wedataRepository.put<T>(database, response.data)
+            return this.wedataStore.put<T>(database, response.data)
                 .then(() => response.data);
         });
     }

@@ -1,4 +1,4 @@
-class SubscriptionRepository implements ISubscriptionRepository {
+class SubscriptionStore implements ISubscriptionStore {
     /**
      * @ngInject
      */
@@ -22,4 +22,4 @@ class SubscriptionRepository implements ISubscriptionRepository {
     }
 }
 
-export = SubscriptionRepository;
+export = SubscriptionStore;

@@ -1,4 +1,4 @@
-interface ICredentialRepository {
+interface ICredentialStore {
     get(): ng.IPromise<Credential>;
 
     put(credential: Credential): ng.IPromise<void>;
@@ -6,13 +6,13 @@ interface ICredentialRepository {
     delete(): ng.IPromise<void>;
 }
 
-interface IExpandedUrlRepository {
+interface IExpandedUrlStore {
     get(url: string): ng.IPromise<string>;
 
     put(url: string, expandedUrl: string): ng.IPromise<void>;
 }
 
-interface ISubscriptionRepository {
+interface ISubscriptionStore {
     allSubscriptions(): ng.IPromise<Subscription[]>;
 
     unreadCounts(): ng.IPromise<UnreadCount[]>;
@@ -33,7 +33,7 @@ interface IStorageBackend {
     removeAll(keys: string[]): ng.IPromise<void>;
 }
 
-interface IWedataRepository {
+interface IWedataStore {
     get<T>(database: string): ng.IPromise<WedataItem<T>[]>;
 
     put<T>(database: string, items: WedataItem<T>[]): ng.IPromise<void>;

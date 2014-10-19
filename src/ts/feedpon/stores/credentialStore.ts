@@ -1,4 +1,4 @@
-class CredentialRepository implements ICredentialRepository {
+class CredentialStore implements ICredentialStore {
     /**
      * @ngInject
      */
@@ -18,4 +18,4 @@ class CredentialRepository implements ICredentialRepository {
     }
 }
 
-export = CredentialRepository;
+export = CredentialStore;

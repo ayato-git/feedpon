@@ -6,18 +6,18 @@ class UrlExpandService {
      */
     constructor(private $q: ng.IQService,
                 private urlExpandStrategy: IUrlExpandStrategy,
-                private expanedUrlRepository: IExpandedUrlRepository) {
+                private expanedUrlStore: IExpandedUrlStore) {
     }
 
     expand(url: string): ng.IPromise<string> {
-        var expandedUrl = this.expanedUrlRepository.get(url);
+        var expandedUrl = this.expanedUrlStore.get(url);
         if (expandedUrl != null) {
             return this.$q.when(expandedUrl);
         }
 
         return this.urlExpandStrategy.expand(url)
             .then((expandedUrl) => {
-                return this.expanedUrlRepository.put(url, expandedUrl)
+                return this.expanedUrlStore.put(url, expandedUrl)
                     .then(() => expandedUrl);
             });
     }
@@ -27,7 +27,7 @@ class UrlExpandService {
         var processingUrls: string[] = [];
 
         var tasks = urls.map((url) => {
-            return this.expanedUrlRepository.get(url)
+            return this.expanedUrlStore.get(url)
                 .then((expandedUrl) => {
                     if (expandedUrl != null) {
                         results[url] = expandedUrl;
@@ -45,7 +45,7 @@ class UrlExpandService {
             return this.urlExpandStrategy.expandAll(processingUrls)
                 .then((expandedUrls) => {
                     var tasks = Object.keys(expandedUrls).map((url) => {
-                        return this.expanedUrlRepository.put(url, expandedUrls[url])
+                        return this.expanedUrlStore.put(url, expandedUrls[url])
                     });
 
                     return this.$q.all(tasks).then(() => angular.extend(results, expandedUrls));
