@@ -27,13 +27,14 @@ class UrlExpandService {
         var processingUrls: string[] = [];
 
         var tasks = urls.map((url) => {
-            return this.expanedUrlRepository.get(url).then((expandedUrl) => {
-                if (expandedUrl != null) {
-                    results[url] = expandedUrl;
-                } else {
-                    processingUrls.push(url);
-                }
-            });
+            return this.expanedUrlRepository.get(url)
+                .then((expandedUrl) => {
+                    if (expandedUrl != null) {
+                        results[url] = expandedUrl;
+                    } else {
+                        processingUrls.push(url);
+                    }
+                });
         });
 
         return this.$q.all(tasks).then(() => {
@@ -41,8 +42,7 @@ class UrlExpandService {
                 return this.$q.when(results);
             }
 
-            return this.urlExpandStrategy
-                .expandAll(processingUrls)
+            return this.urlExpandStrategy.expandAll(processingUrls)
                 .then((expandedUrls) => {
                     var tasks = Object.keys(expandedUrls).map((url) => {
                         return this.expanedUrlRepository.put(url, expandedUrls[url])

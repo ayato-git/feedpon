@@ -1,5 +1,13 @@
 import Enumerable = require('linqjs');
 
+interface IMenuScope extends ng.IScope {
+    $exposeAside: any;
+
+    categories: Category[];
+
+    items: {category: Category; subscription: Subscription; unreadCount: UnreadCount}[];
+}
+
 class MenuController {
     /**
      * @ngInject

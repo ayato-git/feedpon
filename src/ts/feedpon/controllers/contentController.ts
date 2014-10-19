@@ -1,3 +1,7 @@
+interface IContentScope extends ng.IScope {
+    contents: Contents;
+}
+
 class ContentController {
     /**
      * @ngInject

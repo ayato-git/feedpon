@@ -27,7 +27,7 @@
     "gulp-util": "^2.2.16",
     "gulp-watch": "^0.6.5",
     "minimist": "^0.1.0",
-    "typescript": "^1.0.1",
+    "typescript": "^1.1.0-1",
     "vinyl-source-stream": "^1.0.0"
   },
   "browser": {
