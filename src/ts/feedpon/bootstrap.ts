@@ -1,3 +1,4 @@
+import IndexedDbProvider = require('./stores/indexedDbProvider');
 import angular = require('angular');
 import controllersModule = require('./modules/controllersModule');
 import directivesModule = require('./modules/directivesModule');
@@ -7,6 +8,21 @@ angular.module('feedpon', [
         directivesModule.name,
         'ui.router'
     ])
+
+    /**
+     * @ngInject
+     */
+    .config((indexedDbProvider: IndexedDbProvider) => {
+        indexedDbProvider
+            .use('feedpon')
+            .migrate(1, (db) => {
+                var subscriptions = db.createObjectStore('subscriptions', { keyPath: 'id' });
+                var unreadCounts = db.createObjectStore('unreadCounts', { keyPath: 'id' });
+                var wedata = db.createObjectStore('wedata', { keyPath: 'resource_url' });
+                wedata.createIndex('databaseResourceUrl', 'database_resource_url');
+            });
+    })
+
     /**
      * @ngInject
      */
@@ -31,6 +47,13 @@ angular.module('feedpon', [
      */
     .config(($urlRouterProvider: ng.ui.IUrlRouterProvider) => {
         $urlRouterProvider.otherwise('/');
+    })
+
+    /**
+     * @ngInject
+     */
+    .config(($sceProvider: ng.ISCEProvider) => {
+        $sceProvider.enabled(false);
     });
 
 if ('cordova' in window) {

@@ -4,6 +4,9 @@ import htmlParser = require('../utils/htmlParser');
 import relativeUrlResolver = require('../utils/relativeUrlResolver');
 import urlParser = require('../utils/urlParser');
 
+var AUTO_PAGERIZE_RESOURCE_URL = 'http://wedata.net/databases/AutoPagerize';
+var LDR_FULL_FEED_RESOURCE_URL = 'http://wedata.net/databases/LDRFullFeed';
+
 function resolveRelativeUrls(url: string, element: JQuery): void {
     var parsedUrl = urlParser(url);
 
@@ -52,8 +55,8 @@ class FullContentLoader {
 
     initSiteinfo(): ng.IPromise<Siteinfo> {
         return this.$q.all([
-            this.wedataLoader.getItems('AutoPagerize'),
-            this.wedataLoader.getItems('LDRFullFeed')
+            this.wedataLoader.getItems(AUTO_PAGERIZE_RESOURCE_URL),
+            this.wedataLoader.getItems(LDR_FULL_FEED_RESOURCE_URL)
         ]).then((responses) => {
             if (responses[0] != null && responses[1] != null) {
                 this.siteinfo = {
@@ -68,8 +71,8 @@ class FullContentLoader {
 
     reloadSiteinfo(): ng.IPromise<Siteinfo> {
         return this.$q.all([
-            this.wedataLoader.reloadItems('AutoPagerize'),
-            this.wedataLoader.reloadItems('LDRFullFeed')
+            this.wedataLoader.reloadItems(AUTO_PAGERIZE_RESOURCE_URL),
+            this.wedataLoader.reloadItems(LDR_FULL_FEED_RESOURCE_URL)
         ]).then((responses) => {
             if (responses[0] != null && responses[1] != null) {
                 this.siteinfo = {

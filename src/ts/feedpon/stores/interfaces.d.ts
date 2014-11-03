@@ -34,7 +34,7 @@ interface IStorageBackend {
 }
 
 interface IWedataStore {
-    get<T>(database: string): ng.IPromise<WedataItem<T>[]>;
+    get<T>(responseUrl: string): ng.IPromise<WedataItem<T>[]>;
 
-    put<T>(database: string, items: WedataItem<T>[]): ng.IPromise<void>;
+    put<T>(items: WedataItem<T>[]): ng.IPromise<void>;
 }

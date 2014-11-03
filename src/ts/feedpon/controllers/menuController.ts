@@ -105,6 +105,7 @@ class MenuController {
                     .defaultIfEmpty({label: 'Uncategorized', id: null});
             })
             .distinct<string>((category) => category.id)
+            .orderBy((category) => category.label)
             .toArray();
 
         this.$scope.items = Enumerable.from(subscriptions)
