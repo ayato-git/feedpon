@@ -5,8 +5,6 @@ import MenuController = require('../controllers/menuController');
 import angular = require('angular');
 import servicesModule = require('./servicesModule');
 
-require('ionic-angular');
-
 var m = angular.module('feedpon.controllers', [
         servicesModule.name,
         'ionic'

@@ -3,6 +3,8 @@ import angular = require('angular');
 import controllersModule = require('./modules/controllersModule');
 import directivesModule = require('./modules/directivesModule');
 
+require('ionic-angular');
+
 angular.module('feedpon', [
         controllersModule.name,
         directivesModule.name,
@@ -47,13 +49,6 @@ angular.module('feedpon', [
      */
     .config(($urlRouterProvider: ng.ui.IUrlRouterProvider) => {
         $urlRouterProvider.otherwise('/');
-    })
-
-    /**
-     * @ngInject
-     */
-    .config(($sceProvider: ng.ISCEProvider) => {
-        $sceProvider.enabled(false);
     });
 
 if ('cordova' in window) {

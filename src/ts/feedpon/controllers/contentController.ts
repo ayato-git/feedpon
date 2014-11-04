@@ -28,8 +28,8 @@ class ContentController {
                 template: 'Loading the full content...'
             });
 
-            this.fullContentLoader.load(link.href).then((element) => {
-                if (element) item.content.content = element.outerHTML;
+            this.fullContentLoader.load(link.href).then((content) => {
+                item.content.content = content;
             }).finally(() => this.$ionicLoading.hide());
         }
     }

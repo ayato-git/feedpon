@@ -238,7 +238,7 @@ interface IFullContentLoader {
 
     reloadSiteinfo(): ng.IPromise<Siteinfo>;
 
-    load(url: string): ng.IPromise<HTMLElement>;
+    load(url: string): ng.IPromise<string>;
 }
 
 interface Siteinfo {
@@ -268,9 +268,9 @@ interface IUrlExpandStrategy {
 }
 
 interface IWedataLoader {
-    getItems<T>(database: string): ng.IPromise<WedataItem<T>[]>;
+    getItems<T>(resourceUrl: string): ng.IPromise<WedataItem<T>[]>;
 
-    reloadItems<T>(database: string): ng.IPromise<WedataItem<T>[]>;
+    reloadItems<T>(resourceUrl: string): ng.IPromise<WedataItem<T>[]>;
 }
 
 interface WedataItem<T> {

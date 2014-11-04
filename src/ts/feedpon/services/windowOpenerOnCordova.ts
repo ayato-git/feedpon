@@ -8,7 +8,7 @@ function WindowOpenerOnCordova($q: ng.IQService, $window: ng.IWindowService): IW
         var resolved = false;
 
         authWindow.addEventListener('loadstart', (e) => {
-            var url = e.url;
+            var url = (<any> e).url;
             if (resolved = url.indexOf(expectUrl) === 0) {
                 deferred.resolve(url);
                 authWindow.close();

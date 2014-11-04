@@ -4,9 +4,10 @@ import htmlParser = require('../utils/htmlParser');
 /**
  * @ngInject
  */
-function provideCspBindHtml($sce: ng.ISCEService,
+function provideCspBindHtml($compile: ng.ICompileService,
                             $http: ng.IHttpService,
                             $parse: ng.IParseService,
+                            $sce: ng.ISCEService,
                             promiseQueue: IPromiseQueue): ng.IDirective {
     function loadImage(url: string): ng.IPromise<string> {
         return $http
@@ -57,6 +58,9 @@ function provideCspBindHtml($sce: ng.ISCEService,
         // Open external links in a new tab.
         body.find('a').attr('target', '_blank');
 
+        // Remove all classes.
+        body.find('*').removeAttr('class');
+
         if (cspIsEnabled()) {
             angular.forEach(body.find('img'), loadSrcAttribute);
         }
@@ -66,23 +70,23 @@ function provideCspBindHtml($sce: ng.ISCEService,
 
     return {
         restrict: 'A',
-        compile: function compile(element) {
-            element.addClass('ng-binding');
+        compile: function compile(element, attrs) {
+            var getter = $parse(attrs['cspBindHtml']);
+
+            function getStringValue(scope: ng.IScope) {
+                return (getter(scope) || '').toString();
+            }
+
+            (<any> $compile).$$addBindingClass(element);
 
             return {
-                post: function postLink(scope, element, attr) {
-                    element.data('$binding', attr['cspBindHtml']);
-
-                    var parsed = $parse(attr['cspBindHtml']);
-
-                    function getStringValue() {
-                        return (parsed(scope) || '').toString();
-                    }
+                post: function postLink(scope, element, attrs) {
+                    (<any> $compile).$$addBindingInfo(element, attrs['cspBindHtml']);
 
                     scope.$watch(getStringValue, (value) => {
-                        var originalHtml = parsed(scope);
-                        var trustedHtml = $sce.getTrustedHtml(originalHtml) || '';
-                        element.empty().append(compileHtml(trustedHtml));
+                        var trustedHtml = $sce.getTrustedHtml(getter(scope)) || '';
+                        var compiledHtml = compileHtml(trustedHtml);
+                        element.empty().append(compiledHtml);
                     });
                 }
             };

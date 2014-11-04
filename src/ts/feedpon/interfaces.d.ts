@@ -4,7 +4,6 @@
 /// <reference path="../../DefinitelyTyped/angular-ui/angular-ui-router.d.ts" />
 /// <reference path="../../DefinitelyTyped/chrome/chrome.d.ts" />
 /// <reference path="../../DefinitelyTyped/chrome/chrome-app.d.ts" />
-/// <reference path="../../DefinitelyTyped/cordova/cordova.d.ts" />
 
 interface Document {
     evaluate(xpathExpression: string,
