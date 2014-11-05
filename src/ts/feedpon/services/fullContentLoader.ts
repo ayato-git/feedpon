@@ -1,53 +1,29 @@
 import Enumerable = require('linqjs');
 import angular = require('angular');
 import htmlParser = require('../utils/htmlParser');
+import htmlSanitizer = require('../utils/htmlSanitizer');
 import relativeUrlResolver = require('../utils/relativeUrlResolver');
 import urlParser = require('../utils/urlParser');
 
 var AUTO_PAGERIZE_RESOURCE_URL = 'http://wedata.net/databases/AutoPagerize';
 var LDR_FULL_FEED_RESOURCE_URL = 'http://wedata.net/databases/LDRFullFeed';
 
-function resolveRelativeUrls(element: HTMLElement, url: string): void {
+function resolveRelativeUrls(target: HTMLElement, url: string): void {
     var parsedUrl = urlParser(url);
 
-    angular.forEach(element.querySelectorAll('a'), (found) => {
+    angular.forEach(target.querySelectorAll('a'), (found) => {
         var href = found.getAttribute('href');
         if (href != null) {
             found.setAttribute('href', relativeUrlResolver(href, parsedUrl));
         }
     });
 
-    angular.forEach(element.querySelectorAll('img, iframe'), (node) => {
+    angular.forEach(target.querySelectorAll('img, iframe'), (node) => {
         var src = node.getAttribute('src');
         if (src != null) {
             node.setAttribute('src', relativeUrlResolver(src, parsedUrl));
         }
     });
-}
-
-function removeSpecialTags(element: HTMLElement): void {
-    angular.forEach(element.querySelectorAll('script, style'), (node) => {
-        node.parentNode.removeChild(node);
-    });
-}
-
-function removeComments(element: HTMLElement): void {
-    var children = Array.prototype.slice.call(element.childNodes);
-    var node: Node;
-
-    while (node = children.pop()) {
-        switch (node.nodeType) {
-            case node.COMMENT_NODE:
-                node.parentNode.removeChild(node);
-                break;
-
-            case node.ELEMENT_NODE:
-                for (var i = 0, l = node.childNodes.length; i < l; i++) {
-                    children.push(node.childNodes[i]);
-                }
-                break;
-        }
-    }
 }
 
 function xPathResultToEnumerable(xpathResult: XPathResult): linqjs.IEnumerable<HTMLElement> {
@@ -75,6 +51,7 @@ class FullContentLoader implements IFullContentLoader {
      */
     constructor(private $http: ng.IHttpService,
                 private $q: ng.IQService,
+                private $sce: ng.ISCEService,
                 private wedataLoader: IWedataLoader) {
     }
 
@@ -120,10 +97,8 @@ class FullContentLoader implements IFullContentLoader {
                 if (content == null) return '';
 
                 resolveRelativeUrls(content, url);
-                removeSpecialTags(content);
-                removeComments(content);
 
-                return content.outerHTML;
+                return this.$sce.trustAsHtml(htmlSanitizer(content));
             });
     }
 
