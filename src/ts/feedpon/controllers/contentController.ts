@@ -29,7 +29,10 @@ class ContentController {
             });
 
             this.fullContentLoader.load(link.href).then((content) => {
-                item.content.content = content;
+                item.content = {
+                    content: content,
+                    direction: 'ltr'
+                };
             }).finally(() => this.$ionicLoading.hide());
         }
     }

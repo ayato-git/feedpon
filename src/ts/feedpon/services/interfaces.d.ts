@@ -183,16 +183,16 @@ interface Contents {
 
 interface ContentItem {
     published: number;
-    tags: ContentItemTag[];
+    tags?: ContentItemTag[];
     alternate: LinkObject[];
-    updated: number;
+    updated?: number;
     title: string;
     engagement: number;
     categories: Category[];
     id: string;
-    author: string;
+    author?: string;
     origin: ContentItemOrigin;
-    content: ContentItemContent;
+    content?: ContentItemContent;
     unread: boolean;
     crawled: number;
 }
