@@ -15,7 +15,11 @@ interface IExpandedUrlStore {
 interface ISubscriptionStore {
     allSubscriptions(): ng.IPromise<Subscription[]>;
 
-    unreadCounts(): ng.IPromise<UnreadCount[]>;
+    allUnreadCounts(): ng.IPromise<UnreadCount[]>;
+
+    clearSubscriptions(): ng.IPromise<void>;
+
+    clearUnreadCounts(): ng.IPromise<void>;
 
     putSubscriptions(subscriptions: Subscription[]): ng.IPromise<void>;
 

@@ -101,6 +101,20 @@ class IndexedDbHelper {
 
         return deffered.promise;
     }
+
+    deleteAll(store: IDBObjectStore): ng.IPromise<void> {
+        var deffered = this.$q.defer<void>();
+        var req = store.clear();
+
+        req.onsuccess = function onSuccess(e) {
+            deffered.resolve();
+        };
+        req.onerror = function onError(e) {
+            deffered.reject((<IDBRequest> e.target).error);
+        };
+
+        return deffered.promise;
+    }
 }
 
 export = IndexedDbHelper;

@@ -115,7 +115,7 @@ interface Feed {
 }
 
 interface IMarkersApi {
-    unreadCounts(input?: UnreadCountsInput): ng.IPromise<UnreadCountsResponce>;
+    allUnreadCounts(input?: UnreadCountsInput): ng.IPromise<UnreadCountsResponce>;
 
     markAsReadForEntries(entryId: string): ng.IPromise<void>;
     markAsReadForEntries(entryIds: string[]): ng.IPromise<void>;

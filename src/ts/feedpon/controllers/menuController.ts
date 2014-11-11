@@ -35,7 +35,7 @@ class MenuController {
         this.$q
             .all([
                 this.feedlyGateway.allSubscriptions(),
-                this.feedlyGateway.unreadCounts()
+                this.feedlyGateway.allUnreadCounts()
             ])
             .then((responses) => {
                 var subscriptions: Subscription[] = responses[0];
@@ -44,8 +44,10 @@ class MenuController {
                 this.loadCompleted(subscriptions, unreadCounts);
 
                 return this.$q.all([
-                    this.subscriptionStore.putSubscriptions(subscriptions),
-                    this.subscriptionStore.putUnreadCounts(unreadCounts)
+                    this.subscriptionStore.clearSubscriptions()
+                        .then(() => this.subscriptionStore.putSubscriptions(subscriptions)),
+                    this.subscriptionStore.clearUnreadCounts()
+                        .then(() => this.subscriptionStore.putUnreadCounts(unreadCounts)),
                 ]);
             })
             .finally(() => {
@@ -88,7 +90,7 @@ class MenuController {
         return this.$q
             .all([
                 this.subscriptionStore.allSubscriptions(),
-                this.subscriptionStore.unreadCounts()
+                this.subscriptionStore.allUnreadCounts()
             ])
             .then((responses) => {
                 if (responses[0] != null && responses[1] != null) {

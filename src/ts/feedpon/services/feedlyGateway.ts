@@ -20,7 +20,7 @@ class FeedlyGateway implements IFeedlyGateway {
         return this.doGet('/v3/feeds/' + feedId);
     }
 
-    unreadCounts(input: UnreadCountsInput = {}): ng.IPromise<UnreadCountsResponce> {
+    allUnreadCounts(input: UnreadCountsInput = {}): ng.IPromise<UnreadCountsResponce> {
         return this.doGet('/v3/markers/counts', input);
     }
 
