@@ -242,8 +242,8 @@ interface IFullContentLoader {
 }
 
 interface Siteinfo {
-    autoPagerize: WedataItem<AutoPagerizeItem>[];
-    ldrFullFeed: WedataItem<LDRFullFeedItem>[]
+    autoPagerize: AutoPagerizeItem[];
+    ldrFullFeed: LDRFullFeedItem[]
 }
 
 interface IHttpClient {

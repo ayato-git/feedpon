@@ -60,14 +60,7 @@ class FullContentLoader implements IFullContentLoader {
             this.wedataLoader.getItems(AUTO_PAGERIZE_RESOURCE_URL),
             this.wedataLoader.getItems(LDR_FULL_FEED_RESOURCE_URL)
         ]).then((responses) => {
-            if (responses[0] != null && responses[1] != null) {
-                this.siteinfo = {
-                    autoPagerize: responses[0],
-                    ldrFullFeed: responses[1]
-                };
-            }
-
-            return this.siteinfo;
+            return this.loadCompleted(responses[0], responses[1]);
         });
     }
 
@@ -76,14 +69,7 @@ class FullContentLoader implements IFullContentLoader {
             this.wedataLoader.reloadItems(AUTO_PAGERIZE_RESOURCE_URL),
             this.wedataLoader.reloadItems(LDR_FULL_FEED_RESOURCE_URL)
         ]).then((responses) => {
-            if (responses[0] != null && responses[1] != null) {
-                this.siteinfo = {
-                    autoPagerize: responses[0],
-                    ldrFullFeed: responses[1]
-                };
-            }
-
-            return this.siteinfo;
+            return this.loadCompleted(responses[0], responses[1]);
         });
     }
 
@@ -108,15 +94,7 @@ class FullContentLoader implements IFullContentLoader {
     }
 
     private findElementsByLDRFullFeed(url: string, target: HTMLElement): linqjs.IEnumerable<HTMLElement> {
-        var items = Enumerable.from(this.siteinfo.ldrFullFeed).select((item) => item.data);
-
-        return Enumerable.empty<LDRFullFeedItem>()
-            .concat(
-                items.where((item) => item.type === 'SBM'),
-                items.where((item) => item.type === 'IND' || item.type === 'INDIVIDUAL'),
-                items.where((item) => item.type === 'SUB' || item.type === 'SUBGENERAL'),
-                items.where((item) => item.type === 'GEN' || item.type === 'GENERAL')
-            )
+        return Enumerable.from(this.siteinfo.ldrFullFeed)
             .where((item) => {
                 try {
                     var urlRegExp = new RegExp(item.url);
@@ -140,7 +118,6 @@ class FullContentLoader implements IFullContentLoader {
 
     private findElementsByAutoPagerize(url: string, target: HTMLElement): linqjs.IEnumerable<HTMLElement> {
         return Enumerable.from(this.siteinfo.autoPagerize)
-            .select((item) => item.data)
             .where((item) => {
                 try {
                     var urlRegExp = new RegExp(item.url);
@@ -160,6 +137,35 @@ class FullContentLoader implements IFullContentLoader {
 
                 return xPathResultToEnumerable(xpathResult);
             });
+    }
+
+    private loadCompleted(autoPagerize: WedataItem<AutoPagerizeItem>[], ldrFullFeed: WedataItem<LDRFullFeedItem>[]): Siteinfo {
+        this.siteinfo.autoPagerize = Enumerable.from(autoPagerize)
+            .select((item) => item.data)
+            .toArray();
+
+        this.siteinfo.ldrFullFeed = Enumerable.from(ldrFullFeed)
+            .select((item) => item.data)
+            .groupBy((item) => {
+                switch (item.type) {
+                case 'SBM':
+                    return 0;
+                case 'IND':
+                case 'INDIVIDUAL':
+                    return 1;
+                case 'SUB':
+                case 'SUBGENERAL':
+                    return 2;
+                case 'GEN':
+                case 'GENERAL':
+                    return 3;
+                }
+            })
+            .orderBy((item) => item.key())
+            .selectMany((item) => item)
+            .toArray();
+
+        return this.siteinfo;
     }
 }
 
