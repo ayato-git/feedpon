@@ -138,7 +138,7 @@ class FeedlyGateway implements IFeedlyGateway {
                             return this.doRequestWithCredential(config, credential);
                         });
                 } else {
-                    return <any> this.$q.reject();
+                    return <any> this.$q.reject(response);
                 }
             })
     }
