@@ -25,75 +25,63 @@ class FeedlyGateway implements IFeedlyGateway {
     }
 
     markAsReadForEntries(entryIds: any): ng.IPromise<void> {
-        if (Array.isArray(entryIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'markAsRead',
-                type: 'entries',
-                entryIds: entryIds
-            });
-        } else {
-            return this.markAsReadForEntries([entryIds])
-        }
+        if (!Array.isArray(entryIds)) entryIds = [entryIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'markAsRead',
+            type: 'entries',
+            entryIds: entryIds
+        });
     }
 
     markAsReadForFeeds(feedIds: any): ng.IPromise<void> {
-        if (Array.isArray(feedIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'markAsRead',
-                type: 'feeds',
-                feedIds: feedIds
-            });
-        } else {
-            return this.markAsReadForFeeds([feedIds])
-        }
+        if (!Array.isArray(feedIds)) feedIds = [feedIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'markAsRead',
+            type: 'feeds',
+            feedIds: feedIds
+        });
     }
 
     markAsReadForCetegories(categoryIds: any): ng.IPromise<void> {
-        if (Array.isArray(categoryIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'markAsRead',
-                type: 'categories',
-                categoryIds: categoryIds
-            });
-        } else {
-            return this.markAsReadForCetegories([categoryIds])
-        }
+        if (!Array.isArray(categoryIds)) categoryIds = [categoryIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'markAsRead',
+            type: 'categories',
+            categoryIds: categoryIds
+        });
     }
 
     keepUnreadForEntries(entryIds: any): ng.IPromise<void> {
-        if (Array.isArray(entryIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'keepUnread',
-                type: 'entries',
-                entryIds: entryIds
-            });
-        } else {
-            return this.keepUnreadForEntries([entryIds])
-        }
+        if (!Array.isArray(entryIds)) entryIds = [entryIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'keepUnread',
+            type: 'entries',
+            entryIds: entryIds
+        });
     }
 
     keepUnreadForFeeds(feedIds: any): ng.IPromise<void> {
-        if (Array.isArray(feedIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'keepUnread',
-                type: 'feeds',
-                feedIds: feedIds
-            });
-        } else {
-            return this.keepUnreadForFeeds([feedIds])
-        }
+        if (!Array.isArray(feedIds)) feedIds = [feedIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'keepUnread',
+            type: 'feeds',
+            feedIds: feedIds
+        });
     }
 
     keepUnreadForCetegories(categoryIds: any): ng.IPromise<void> {
-        if (Array.isArray(categoryIds)) {
-            return this.doPost<void>('/v3/markers', {
-                action: 'keepUnread',
-                type: 'categories',
-                categoryIds: categoryIds
-            });
-        } else {
-            return this.keepUnreadForCetegories([categoryIds])
-        }
+        if (!Array.isArray(categoryIds)) categoryIds = [categoryIds];
+
+        return this.doPost<void>('/v3/markers', {
+            action: 'keepUnread',
+            type: 'categories',
+            categoryIds: categoryIds
+        });
     }
 
     getEntryIds(input: GetStreamInput): ng.IPromise<GetEntryIdsResponse> {
