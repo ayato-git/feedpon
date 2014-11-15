@@ -107,7 +107,7 @@ gulp.task('symlink', ['copy', 'jade', 'sass', 'browserify'], function() {
 });
 
 gulp.task('clean', function() {
-  return gulp.src(['build', 'app/chrome/www', 'app/cordova/www'])
+  return gulp.src(['build'])
     .pipe(plugins.clean());
 });
 
