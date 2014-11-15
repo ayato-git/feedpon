@@ -50,7 +50,7 @@ gulp.task('sass', ['bower'], function() {
 gulp.task('typescript', ['bower'], function() {
   return gulp.src('src/ts/**/*.ts')
     .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
-    .pipe(plugins.tsc({
+    .pipe(plugins.typescript({
       module: 'commonjs',
       noImplicitAny: true,
       target: 'ES5'
@@ -102,8 +102,8 @@ gulp.task('watch', function() {
 
 gulp.task('symlink', ['copy', 'jade', 'sass', 'browserify'], function() {
   gulp.src('build/www')
-    .pipe(plugins.symlink('app/chrome'))
-    .pipe(plugins.symlink('app/cordova'));
+    .pipe(plugins.symlink('app/chrome/www', {force: true}))
+    .pipe(plugins.symlink('app/cordova/www', {force: true}));
 });
 
 gulp.task('clean', function() {
