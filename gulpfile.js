@@ -60,19 +60,30 @@ gulp.task('typescript', ['bower'], function() {
 
 gulp.task('browserify', ['typescript'], function() {
   var browserify = require('browserify');
-  var source = require('vinyl-source-stream');
-  return browserify({
+  var bundler = browserify({
       basedir: './build/modules/',
       entries: ['./feedpon/bootstrap.js']
-    })
-    .bundle()
-    .pipe(source('index.js'))
-    .pipe(isProduction ? plugins.streamify(plugins.uglify({
-        compress: {
-          angular: true
-        }
-      })) : plugins.util.noop())
-    .pipe(gulp.dest('build/www/js/'));
+    });
+
+  if (isWatching) {
+    var watchify = require('watchify');
+    bundler = watchify(bundler);
+  }
+
+  var rebundle = function() {
+    var source = require('vinyl-source-stream');
+    return bundler.bundle()
+      .pipe(isWatching ? plugins.plumber() : plugins.util.noop())
+      .pipe(source('index.js'))
+      .pipe(isProduction ? plugins.streamify(plugins.uglify({
+          compress: {
+            angular: true
+          }
+        })) : plugins.util.noop())
+      .pipe(gulp.dest('build/www/js/'));
+  };
+
+  bundler.on('update', rebundle);
 });
 
 gulp.task('connect', function() {

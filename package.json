@@ -28,7 +28,8 @@
     "gulp-watch": "^0.6.5",
     "minimist": "^0.1.0",
     "typescript": "^1.1.0-1",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.1.1"
   },
   "browser": {
     "angular": "./bower_components/angular/angular.js",
